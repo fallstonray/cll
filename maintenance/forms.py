@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 from .models import Contract, Customer
-
+#test comment :)
 
 class ContractForm(ModelForm):
     class Meta:
