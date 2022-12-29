@@ -1,0 +1,59 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% block content %}
+
+<h1>Maintenance Contracts</h1>
+<body>
+<div class="row">
+    <div class="col-md">
+    <h7>TOTAL CONTRACTS IN SYSTEM: <strong>{{contracts_count}}</strong></h7>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <div class="card card-body">
+                <form method="get">
+                        {{myFilter.form}}
+                <button class="btn btn-primary" type="submit">Search</button>
+              </form>
+            </div>
+        </div>
+    </div>
+    <div class="card card-body">
+        <table class="table table-sm">
+            <tr>
+                <th>Customer</th>
+                <th>Site Name</th>
+                <th>Location</th>
+                <th>Sold By</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Visits</th>
+                <th>Price</th>
+                <th>View</th>
+                <th>Update</th>
+            </tr>
+    
+            
+                
+                {% for contract in contracts %}
+                <tr>
+                    <td>{{contract.customer}}</td>
+                    <td>{{contract.name}}</td>
+                    <td>{{contract.location}}</td>
+                    <td>{{contract.salesman}}</td>
+                    <td>{{contract.start_date}}</td>
+                    <td>{{contract.end_date}}</td>
+                    <td>{{contract.visits}}</td>
+                    <td>${{contract.price|floatformat:2|intcomma}}</td>
+                    <td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_contract' contract.id %}">View</a></td>
+                    <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.id %}">Update</a></td>
+                </tr>
+                {% endfor %}
+                
+        </table>
+    </div>
+</div>
+           
+</body>
+{% endblock %}
+

@@ -1,0 +1,68 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% block content %}
+
+<h1>Dashboard</h1>
+
+{%  include 'maintenance/status.html' %}
+
+<br>
+
+<div class="row">
+	<div class="col-md-5">
+		<h5>NEWEST 5 CUSTOMERS:</h5>
+		<hr>
+		<div class="card card-body">
+		
+			<table class="table table-sm">
+				<tr>
+					<th>Customer</th>
+					<th>Phone</th>
+					<th>View</th>
+				</tr>
+                {% for customer in customers reversed %}
+				{% if forloop.counter <= 5 %}
+                <tr>    
+                    <td>{{customer.name}}</td>
+                    <td>{{customer.phone1}}</td>
+					<td><a class="btn btn-sm btn-info" href="{% url 'customer' customer.id %}">View</a></td>                </tr>
+				{% endif %}
+                {% endfor %}
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md-7">
+		<h5>NEWEST 5 CONTRACTS</h5>
+		<hr>
+		<div class="card card-body">
+			
+			<table class="table table-sm">
+				<tr>
+					<th>Site Name</th>
+					<th>Start Date</th>
+					<th>Visits</th>
+					<th>Price</th>
+					<th>Update</th>
+                    <th>Delete</th>
+				</tr>
+                {% for contract in contracts reversed %}
+				{% if forloop.counter <= 5 %}
+                    <tr>
+                        <td>{{contract.name}}</td>
+                        <td>{{contract.start_date}}</td>
+                        <td>{{contract.visits}}</td>
+                        <td>${{contract.price|floatformat:2|intcomma}}</td>
+                        <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.id %}">Update</a></td>
+                        <td><a class="btn btn-danger  btn-sm btn-block" href="{% url 'delete_contract' contract.id %}">Delete</a></td>
+                    </tr>
+				{% endif %}
+                {% endfor %}
+
+			</table>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}

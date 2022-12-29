@@ -1,0 +1,134 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% block content %}
+
+	<br>
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Customer: {{customer.name}}</h5>
+			<hr>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'update_customer' customer.id %}">Update Customer</a><br>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'create_contract' customer.id %}">New Contract</a>
+
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Contact Information</h5>
+			<hr>
+			<p><strong>Contact:</strong> {{customer.contact_name}}<br>
+				<strong>Email:</strong> {{customer.email}}<br>
+				<strong>Phone:</strong> {{customer.phone1}}<br>
+				{% if customer.phone2 %}
+				Phone Alt: {{customer.phone2}}<br>
+				{% endif %}
+				<strong>Address:</strong> {{customer.address}}<br>
+				<strong>City:</strong> {{customer.city}}<strong>   State:</strong> {{customer.state}}  <strong>    Zip:</strong> {{customer.zip}}<br>
+				<strong>Note:</strong> {{customer.notes}}<br>
+			</p>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Billing Information</h5>
+			<hr>
+			<p>Name: {{customer.billing_name}}<br>
+				Attn / Ref: {{customer.billing_ref}}<br>
+				Address: {{customer.billing_add1}}<br>
+				{% if customer.billing_add2 %}
+				Address: {{customer.billing_add2}}<br>
+				{% endif %}
+				City: {{customer.billing_city}} | State: {{customer.billing_state}}  |  Zip: {{customer.billing_zip}}<br>
+			</p>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Total Contracts</h5>
+			<hr>
+			<h2 style="text-align: center;padding: 1px">{{contracts_count}}</h2>
+			<hr>
+			<h5>Total Contracts Value</h5>
+			<h2 style="text-align: center;padding: 1px">${{total_customer_contracts_value|floatformat:2|intcomma}}</h2>
+		</div>
+	</div>
+<p></p>
+<br>
+<div class="row">
+	<div class="col">
+		<div class="card card-body">
+			<form method="get">
+					{{myFilter.form}}
+		    <button class="btn btn-primary" type="submit">Search</button>
+		  </form>
+		</div>
+	</div>
+</div>
+<br>
+<div><br></div>
+<h4>Active Contracts</h4>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Start Date</th>
+					<th>End Date</th>
+					<th>Visits</th>
+					<th>Price</th>
+					<th>Update</th>
+					<th>View</th>
+				</tr>
+				{% for contract in contracts %}
+				<tr>
+					<td>{{contract.name}}</td>
+					<td>{{contract.start_date}}</td>
+					<td>{{contract.end_date}}</td>
+					<td>{{contract.visits}}</td>
+					<td>${{contract.price|floatformat:2|intcomma}}</td>
+					<td><a class="btn btn-sm btn-info" href="{% url 'update_contract' contract.id %}">Update</td>
+					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' contract.id %}">View</td>
+				</tr>	
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+<div><br></div>
+<h4>Expired Contracts</h4>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Start Date</th>
+					<th>End Date</th>
+					<th>Visits</th>
+					<th>Price</th>
+					<th>Copy</th>
+					<th>View</th>
+				</tr>
+				{% for contract in contracts %}
+				<tr>
+					<td>{{contract.name}}</td>
+					<td>{{contract.start_date}}</td>
+					<td>{{contract.end_date}}</td>
+					<td>{{contract.visits}}</td>
+					<td>${{contract.price|floatformat:2|intcomma}}</td>
+					<td><a class="btn btn-sm btn-info" href="{% url 'create_contract' contract.id %}">Copy</td>
+					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' contract.id %}">View</td>
+				</tr>	
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

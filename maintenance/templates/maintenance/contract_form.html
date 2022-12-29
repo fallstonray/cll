@@ -1,0 +1,18 @@
+{% extends 'maintenance/main.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<h1>Please add new contract details.</h1>
+<form actions="" method="POST">
+    {% csrf_token %}
+    <table border="2"><br>
+    {{form.as_table}}
+    </table><BR>
+    <input type="submit" name="Submit">
+    
+</form>
+
+
+
+{% endblock %}
