@@ -1,17 +1,85 @@
 {% extends 'maintenance/main.html' %}
 {% load humanize %}
 {% block content %}
+<br> 
+<p></p>
+	<div class="row">
+		<div class="col">
+			<div class="card card-body">
+				<td>{{contract.customer}}</td>
+				<td>{{contract.visits}}</td>
+				<p>View Contract Template</p>
+            
+			</div>
+		</div>
+	</div>
+<br>
 
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Customer: {{contract.customer}}</h5>
+			<hr>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'update_contract' contract.id %}">Update Contract</a><br>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'customer' contract.customer.id %}">Goto Customer</a>
+
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Site Name: {{contract.site_name}}</h5>
+			<hr>
+			<p><strong>Description:</strong> {{contract.contract_description}}<br>
+				<strong>Location:</strong> {{contract.location}}<br>
+				<strong>Start Date:</strong> {{contract.start_date}}<br>
+				{% if customer.phone2 %}
+				Phone Alt: {{customer.phone2}}<br>
+				{% endif %}
+				<strong>End Date:</strong> {{contract.end_date}}<br>
+				<strong>Price: $</strong> {{contract.price|floatformat:2|intcomma}}<br>
+				<strong>Payments: {{contract.payments}}</strong> <br>
+				
+			</p>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Billing Information</h5>
+			<hr>
+			<p>Name: {{customer.billing_name}}<br>
+				Attn / Ref: {{customer.billing_ref}}<br>
+				Address: {{customer.billing_add1}}<br>
+				{% if customer.billing_add2 %}
+				Address: {{customer.billing_add2}}<br>
+				{% endif %}
+				City: {{customer.billing_city}} | State: {{customer.billing_state}}  |  Zip: {{customer.billing_zip}}<br>
+			</p>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Total Contracts</h5>
+			<hr>
+			<h2 style="text-align: center;padding: 1px">{{contracts_count}}</h2>
+			<hr>
+			<h5>Total Contracts Value</h5>
+			<h2 style="text-align: center;padding: 1px">${{total_customer_contracts_value|floatformat:2|intcomma}}</h2>
+		</div>
+	</div>
+<p></p>
+<br>
+
+<p></p>
 <div class="row">
 	<div class="col">
 		<div class="card card-body">
-			
-
-            
+			<strong>Notes:</strong> {{contract.notes}}<br>  
 		</div>
 	</div>
-</div
-
+</div>
 
 
 {% endblock %}

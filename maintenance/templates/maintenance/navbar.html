@@ -8,8 +8,40 @@
   }
 </style>
 
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Classic Landscape</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/home">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/customers">Customer Center</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/maintenance/">Maintenance Contracts</a>
+        </li>
+      </ul>
+      <span class="navbar-text">
+      {% if user.is_authenticated %}
+      <span class="hello-msg">Logged in as {{user.username}} | <a href="/logout">Logout</a></span>
+      {% else %}
+        <a href="/login">Login</a>
+      {% endif%}
+      </span>
+    </div>
+  </div>
+</nav>
+
+
+
+
+
+<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
 
     <a class="navbar-brand" href="#">Classic Landscape</a> 
@@ -20,7 +52,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item active">
-         <a class="nav-link" href="/">Dashboard</a>
+         <a class="nav-link" href="/home">Dashboard</a>
         </li>
         <li class="nav-item">
          <a class="nav-link" href="/customers/">Customers</a>
@@ -31,8 +63,23 @@
       </ul>
     </div>
   </div> 
-  <span class="hello-msg">Hello, {{request.user}}</span>
-  <span class="hello-msg"><a href="">Logout</a></span>
+  <div>
+    <ul class="navbar-nav">
+   
+      {% if user.is_authenticated %}
+      <span class="hello-msg">Logged in as {{user.username}} |  </span>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+      {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="/login">Login</a>
+      </li>
+      {% endif%}
+    </ul>
+  <!-- <span class="hello-msg">Hello, {{request.user}}</span>
+  <span class="hello-msg"><a href="">Logout</a></span> -->
+</div>
 </nav>
 
  

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 import environ
+import mimetypes
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -48,7 +49,12 @@ INSTALLED_APPS = [
     'django_filters',
     'maintenance',
     'phone_field',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISP_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -128,12 +134,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = 'images/'
+MEDIA_URL = '/images/'
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, '/static/')
+    os.path.join(BASE_DIR, './static/')
 ]
 
 # Default primary key field type
@@ -143,3 +149,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # SECRET_KEY = 'django-insecure-7++_px*jb$19y(!^sawlxm)&@w91^%w=x0_wx2vna!_ys*b1a^'
+
+LOGIN_REDIRECT_URL = '/home'
+LOGOUT_REDIRECT_URL = '/login'

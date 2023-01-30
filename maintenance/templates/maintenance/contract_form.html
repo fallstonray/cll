@@ -3,13 +3,14 @@
 {% load humanize %}
 
 {% block content %}
-<h1>Please add new contract details.</h1>
+<h1>Please add new or update contract details.</h1>
 <form actions="" method="POST">
     {% csrf_token %}
     <table border="2"><br>
     {{form.as_table}}
     </table><BR>
     <input type="submit" name="Submit">
+    <a class="btn btn-warning" href="{% url 'home' %}">Cancel</a>
     
 </form>
 

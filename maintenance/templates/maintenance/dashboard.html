@@ -16,7 +16,7 @@
 		
 			<table class="table table-sm">
 				<tr>
-					<th>Customer</th>
+					<th>Customer Name</th>
 					<th>Phone</th>
 					<th>View</th>
 				</tr>
@@ -43,16 +43,18 @@
 					<th>Start Date</th>
 					<th>Visits</th>
 					<th>Price</th>
+					<th>View</th>
 					<th>Update</th>
                     <th>Delete</th>
 				</tr>
                 {% for contract in contracts reversed %}
 				{% if forloop.counter <= 5 %}
                     <tr>
-                        <td>{{contract.name}}</td>
+                        <td>{{contract.site_name}}</td>
                         <td>{{contract.start_date}}</td>
                         <td>{{contract.visits}}</td>
                         <td>${{contract.price|floatformat:2|intcomma}}</td>
+						<td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'view_contract' contract.id %}">View</a></td>
                         <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.id %}">Update</a></td>
                         <td><a class="btn btn-danger  btn-sm btn-block" href="{% url 'delete_contract' contract.id %}">Delete</a></td>
                     </tr>
@@ -64,5 +66,33 @@
 	</div>
 
 </div>
-
+<br>
+<div class="row">
+	<div class="col-md-5">
+		<h5>EXPIRING WITHIN 60 DAYS</h5 >
+			<hr>
+		<div class="col">
+			<div class="card card-body">
+				<table class="table table-sm">
+					<tr>
+						<th>Customer Name</th>
+						<th>Site Name</th>
+						<th>End Date</th>
+						<th>View</th>
+					</tr>
+					{% for list in expire_list %}
+					<tr>    
+						<td>{{list.customer}}</td>
+						<td>{{list.site_name}}</td>
+						<td>{{list.end_date}}</td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'view_contract' list.id %}">View</a></td>          
+					    </tr>
+					{% endfor %}
+				</table>
+				
+				<br>
+			</div>
+		</div>
+	</div>
+</div>			
 {% endblock %}
