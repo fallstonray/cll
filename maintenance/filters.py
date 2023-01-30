@@ -6,11 +6,12 @@ from .models import *
 class ContractFilter(django_filters.FilterSet):
     # start_date = DateFilter(field_name="date_created", lookup_expr='gte')
     # end_date = DateFilter(field_name="date_created", lookup_expr='lte')
-    name = CharFilter(field_name='name', lookup_expr='icontains')
+    name = CharFilter(field_name='site_name', lookup_expr='icontains')
 
     class Meta:
         model = Contract
         fields = ['name']
+        # fields = ['__all__']   # all fields
         # exclude = ['customer', 'date_created']
 
 
