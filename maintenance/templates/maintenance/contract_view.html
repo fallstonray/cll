@@ -82,16 +82,15 @@
 			{% else %}
 				None
 			{% endif %}<br>
-			<strong>Fall Flowers: </strong> {% if contract.flowers_fall is true %}
+			<strong>Fall Flowers: </strong> {% if contract.flowers_fall %}
 				{{contract.flowers_fall}} 
 			{% else %}
 				None
 			{% endif %}<br>
-			<strong>Fall Mulch: </strong> 
-			{% if contract.mulch_fall is true %}
-				Yes 
+			<strong>Fall Mulch: </strong> {% if contract.mulch_fall is True %}
+			Yes 
 			{% else %}
-				No
+			No
 			{% endif %}<br>
 	
 
