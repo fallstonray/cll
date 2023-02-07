@@ -2,26 +2,27 @@
 {% load humanize %}
 {% block content %}
 
-<h1>Customers</h1>
+<h1>Customer Center</h1>
 <body>
 <div class="row">
     <div class="col-md">
     <h7>TOTAL CUSTOMERS IN SYSTEM: <strong>{{customers_count}}</strong></h7>
     <br>
-    <p>
-        <a class="btn btn-primary  btn-block" href="{% url 'create_customer' %}">Add New Customer</a>
-    </p>
+    <p></p>
     <hr>
     <div class="row">
         <div class="col">
             <div class="card card-body">
                 <form method="get">
                         {{myFilter.form}}
-                <button class="btn btn-primary" type="submit">Search</button>
-              </form>
+                <button class="btn btn-primary" type="submit">Search</button> <a class="btn btn-primary  btn-block" href="{% url 'create_customer' %}">Add New Customer</a>
+                </form>
+              
             </div>
+            
         </div>
     </div>
+    <br>
     <div class="card card-body">
         <table class="table table-sm">
             <tr>

@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from .models import *
 from .forms import ContractForm, CustomerForm, RegisterForm
 from .filters import ContractFilter, CustomerFilter
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.auth.forms import UserCreationForm
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from django.db.models.functions import Now
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.timezone import datetime
 
 
 def sign_up(request):
@@ -47,9 +48,11 @@ def home(request):
     amounts = active_contracts.values_list('price', flat=True)
     total_contracts_value = sum(amounts)
 
-    # Upcoming expirations
+    # expiring in the next 60 days
+    plus60 = date.today() + timedelta(days=60)
+    today = date.today()
     expire_list = Contract.objects.filter(
-        end_date__lte=datetime.now()+timedelta(days=60))
+        end_date__range=[today, plus60])
 
     myFilter = ContractFilter()
     context = {'contracts': contracts, 'customers': customers,
@@ -59,8 +62,8 @@ def home(request):
     return render(request, 'maintenance/dashboard.html', context)
 
 
-@login_required(login_url="/login")
-@permission_required("maintenance.add_customer", login_url="/login", raise_exception=True)
+@ login_required(login_url="/login")
+@ permission_required("maintenance.add_customer", login_url="/login", raise_exception=True)
 def createCustomer(request):
     form = CustomerForm(initial={'customer': customer})
     if request.method == 'POST':
@@ -76,7 +79,7 @@ def createCustomer(request):
 # below is the view for a list of customers with search capabilities
 
 
-@login_required(login_url="/login")
+@ login_required(login_url="/login")
 def customers(request):
     customers = Customer.objects.all()
     customers_count = customers.count()
@@ -90,31 +93,45 @@ def customers(request):
 # below is the view for a specific customer
 
 
-@login_required(login_url="/login")
+@ login_required(login_url="/login")
 def customer(request, pk):
     customer = Customer.objects.get(id=pk)
     contracts = customer.contract_set.all()
-    contracts_count = contracts.count()
-    amounts = customer.contract_set.values_list('price', flat=True)
-    total_customer_contracts_value = sum(amounts)
+    # print(contracts)
+    # contracts_count = contracts.count()
+    # amounts = customer.contract_set.values_list('price', flat=True)
+    # total_customer_contracts_value = sum(amounts)
     myFilter = ContractFilter(request.GET, queryset=contracts)
     allcontracts = myFilter.qs
 
     active_contracts = myFilter.qs.filter(
         # start_date__gte=datetime.now()-timedelta(days=365))
         end_date__gte=datetime.now())
+    active_count = active_contracts.count()
+    # print(active_count)
+    amounts = active_contracts.aggregate(Sum('price', flat=True))
+    # print(amounts)
+    get_total = list(amounts.values())[0]
+    if get_total is None:
+        get_total = 0
+    # print(type(get_total))
+    # print(get_total)
+    get_total = int(get_total)
+    active_contracts_value = get_total
 
     expired_contracts = myFilter.qs.filter(
         # start_date__gte=datetime.now()-timedelta(days=365))
         end_date__lt=datetime.now())
 
-    context = {'customer': customer, 'contracts': contracts,
-               'contracts_count': contracts_count, 'total_customer_contracts_value': total_customer_contracts_value, 'myFilter': myFilter, 'active_contracts': active_contracts, 'expired_contracts': expired_contracts}
+    context = {'customer': customer, 'contracts': contracts, 'myFilter': myFilter,
+               'active_contracts_value': active_contracts_value,
+               'active_contracts': active_contracts,
+               'expired_contracts': expired_contracts, 'active_count': active_count}
     return render(request, 'maintenance/customer.html', context)
 
 
 # below is the view for updating a customer
-@login_required(login_url="/login")
+@ login_required(login_url="/login")
 def updateCustomer(request, pk):
     customer = Customer.objects.get(id=pk)
     form = CustomerForm(instance=customer)
@@ -123,14 +140,14 @@ def updateCustomer(request, pk):
         form = CustomerForm(request.POST, instance=customer)
         if form.is_valid():
             form.save()
-            return redirect('/customers/')
+            return redirect('customer', pk)
     context = {'form': form}
     return render(request, 'maintenance/customer_form.html', context)
 
 # below is the view for all maintenance contracts
 
 
-@login_required(login_url="/login")
+@ login_required(login_url="/login")
 def maintenance(request):
     contracts = Contract.objects.all()
     contracts_count = contracts.count()
@@ -142,10 +159,33 @@ def maintenance(request):
     return render(request, 'maintenance/maintenance.html', context)
 
 
-@login_required(login_url="/login")
+@ login_required(login_url="/login")
 def createContract(request, pk):
+    # customer = Customer.objects.get(id=pk) ~ this used to work but stopped, changed get to filter
     customer = Customer.objects.get(id=pk)
     form = ContractForm(initial={'customer': customer})
+    if request.method == 'POST':
+        # print('Printing POST:', request.POST)
+        form = ContractForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('view_contract', pk)
+
+    context = {'form': form}
+    return render(request, 'maintenance/contract_form.html', context)
+
+
+@ login_required(login_url="/login")
+def copyContract(request, pk):
+    contract = Contract.objects(id=pk)
+    contract.pk = None
+    contract.save()
+
+    site_name = Contract.objects.filter(id=pk)
+    form = ContractForm(
+        initial={'customer': customer})
+    # form = ContractForm(
+    #     initial={'customer': customer, 'site_name': Contract.site_name, 'contract.price': Contract.price})
     if request.method == 'POST':
         # print('Printing POST:', request.POST)
         form = ContractForm(request.POST)
@@ -156,18 +196,19 @@ def createContract(request, pk):
     context = {'form': form}
     return render(request, 'maintenance/contract_form.html', context)
 
+
 # below was copied from def customer and modified
 
-
-@login_required(login_url="/login")
+@ login_required(login_url="/login")
 def viewContract(request, pk):
     contract = Contract.objects.get(id=pk)
-    context = {'customer': customer,
-               'contract': contract, 'visits': contract.visits, }
+    context = {'contract': contract}
+    # context = {'customer': customer,
+    #            'contract': contract, 'visits': contract.visits, 'flowers_fall': contract.flowers_fall, 'mulch_fall': contract.mulch_fall}
     return render(request, 'maintenance/contract_view.html', context)
 
 
-@login_required(login_url="/login")
+@ login_required(login_url="/login")
 def updateContract(request, pk):
     contract = Contract.objects.get(id=pk)
     form = ContractForm(instance=contract)
@@ -176,12 +217,12 @@ def updateContract(request, pk):
         form = ContractForm(request.POST, instance=contract)
         if form.is_valid():
             form.save()
-            return redirect('/maintenance/')
+            return redirect('view_contract', pk)
     context = {'form': form}
     return render(request, 'maintenance/contract_form.html', context)
 
 
-@login_required(login_url="/login")
+@ login_required(login_url="/login")
 def deleteContract(request, pk):
     contract = Contract.objects.get(id=pk)
     if request.method == 'POST':

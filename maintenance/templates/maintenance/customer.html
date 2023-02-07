@@ -49,12 +49,12 @@
 
 	<div class="col-md">
 		<div class="card card-body">
-			<h5>Total Contracts</h5>
+			<h5>Active Contracts</h5>
 			<hr>
-			<h2 style="text-align: center;padding: 1px">{{contracts_count}}</h2>
+			<h2 style="text-align: center;padding: 1px">{{active_count}}</h2>
 			<hr>
-			<h5>Total Contracts Value</h5>
-			<h2 style="text-align: center;padding: 1px">${{total_customer_contracts_value|floatformat:2|intcomma}}</h2>
+			<h5>Active Contracts Value</h5>
+			<h2 style="text-align: center;padding: 1px">${{active_contracts_value|floatformat:2|intcomma}}</h2>
 		</div>
 	</div>
 <p></p>
@@ -122,7 +122,7 @@
 					<td>{{expired.end_date}}</td>
 					<td>{{expired.visits}}</td>
 					<td>${{expired.price|floatformat:2|intcomma}}</td>
-					<td><a class="btn btn-sm btn-info" href="{% url 'create_contract' expired.id %}">Copy</td>
+					<td><a class="btn btn-sm btn-info" href="{% url 'copy_contract' expired.id %}">Copy</td>
 					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' expired.id %}">View</td>
 				</tr>	
 				{% endfor %}

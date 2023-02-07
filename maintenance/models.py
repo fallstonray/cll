@@ -1,6 +1,6 @@
 from django.db import models
 from phone_field import PhoneField
-from datetime import date
+from datetime import date, timedelta
 
 
 class Customer(models.Model):
@@ -42,6 +42,10 @@ class Mulchcolor(models.Model):
         return self.color
 
 
+def get_end_date():
+    return date.today() + timedelta(days=365)
+
+
 class Contract(models.Model):
     site_name = models.CharField(max_length=200)
     customer = models.ForeignKey(
@@ -50,7 +54,7 @@ class Contract(models.Model):
         max_length=200, default='Maintenance Contract')
     location = models.CharField(max_length=200)
     start_date = models.DateField(default=date.today)
-    end_date = models.DateField()
+    end_date = models.DateField(default=get_end_date)
     price = models.FloatField(null=True)
     payments = models.IntegerField(default=12, null=True)
     salesrep = models.ForeignKey(Soldby, null=True, on_delete=models.SET_NULL)
@@ -64,11 +68,12 @@ class Contract(models.Model):
     mulch_yd = models.IntegerField(default=0, null=True)
     mulch_color = models.ForeignKey(
         Mulchcolor, null=True, blank=True, on_delete=models.SET_NULL)
-    mulch_fall = models.BooleanField(default=False, null=True)
+    mulch_fall = models.BooleanField(default=False)
 
     leaf_cleanup = models.SmallIntegerField(default=1, null=True)
     aeration_overseed = models.BooleanField(default=False)
     turf_apps = models.BooleanField(default=False)
+    turf_apps_count = models.IntegerField(default=0, null=True)
     irrigation = models.BooleanField(default=False)
 
     flowers_spring = models.IntegerField(default=0, null=True)

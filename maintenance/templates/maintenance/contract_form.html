@@ -1,16 +1,16 @@
 {% extends 'maintenance/main.html' %}
 {% load static %}
 {% load humanize %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 <h1>Please add new or update contract details.</h1>
 <form actions="" method="POST">
     {% csrf_token %}
-    <table border="2"><br>
-    {{form.as_table}}
+    <!-- <table border="2"><br> -->
+    {{form|crispy}}
     </table><BR>
-    <input type="submit" name="Submit">
-    <a class="btn btn-warning" href="{% url 'home' %}">Cancel</a>
+    <input class="btn btn-primary" type="submit" name="Submit">
+    <a class="btn btn-danger" href="{% url 'maintenance' %}">Cancel</a>
     
 </form>
 

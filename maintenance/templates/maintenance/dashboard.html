@@ -45,7 +45,7 @@
 					<th>Price</th>
 					<th>View</th>
 					<th>Update</th>
-                    <th>Delete</th>
+                    <!-- <th>Delete</th> -->
 				</tr>
                 {% for contract in contracts reversed %}
 				{% if forloop.counter <= 5 %}
@@ -54,9 +54,9 @@
                         <td>{{contract.start_date}}</td>
                         <td>{{contract.visits}}</td>
                         <td>${{contract.price|floatformat:2|intcomma}}</td>
-						<td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'view_contract' contract.id %}">View</a></td>
+						<td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_contract' contract.id %}">View</a></td>
                         <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.id %}">Update</a></td>
-                        <td><a class="btn btn-danger  btn-sm btn-block" href="{% url 'delete_contract' contract.id %}">Delete</a></td>
+                        <!-- <td><a class="btn btn-danger  btn-sm btn-block" href="{% url 'delete_contract' contract.id %}">Delete</a></td> -->
                     </tr>
 				{% endif %}
                 {% endfor %}

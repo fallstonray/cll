@@ -92,8 +92,15 @@ WSGI_APPLICATION = 'cll.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'cll2023',
+        'USER': 'postgres',
+        'PASSWORD': '7223',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        # Below is the working sqlite originally used to develope with
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
