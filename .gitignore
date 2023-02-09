@@ -1,3 +1,4 @@
+settings.py
 .env
 cll.code-workspace
 db.sqlite3

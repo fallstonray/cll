@@ -63,6 +63,7 @@ class Contract(models.Model):
     visits = models.IntegerField(default=24, null=True)
     sq_turf = models.IntegerField(default=0, null=True)
     sq_mulch = models.IntegerField(default=0, null=True)
+    tree_rings = models.IntegerField(default=0, null=True)
     hours_total_contract = models.IntegerField(null=True)
 
     mulch_yd = models.FloatField(default=0, null=True)
