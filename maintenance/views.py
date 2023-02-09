@@ -170,7 +170,6 @@ def createContract(request, pk):
         if form.is_valid():
             form.save()
             return redirect('view_contract', pk)
-
     context = {'form': form}
     return render(request, 'maintenance/contract_form.html', context)
 
