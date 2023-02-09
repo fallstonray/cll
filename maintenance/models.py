@@ -76,7 +76,7 @@ class Contract(models.Model):
     turf_apps = models.BooleanField(default=False)
     turf_apps_count = models.IntegerField(default=0, null=True)
     irrigation = models.BooleanField(default=False)
-
+    irrigation_inspections = models.IntegerField(default=0, null=True)
     flowers_spring = models.IntegerField(default=0, null=True)
     flowers_fall = models.IntegerField(default=0, null=True)
 
