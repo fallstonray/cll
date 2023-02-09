@@ -65,7 +65,7 @@ class Contract(models.Model):
     sq_mulch = models.IntegerField(default=0, null=True)
     hours_total_contract = models.IntegerField(null=True)
 
-    mulch_yd = models.IntegerField(default=0, null=True)
+    mulch_yd = models.FloatField(default=0, null=True)
     mulch_color = models.ForeignKey(
         Mulchcolor, null=True, blank=True, on_delete=models.SET_NULL)
     mulch_fall = models.BooleanField(default=False)

@@ -1,8 +1,15 @@
 from django.contrib import admin
 from .models import *
-# Register your models here.
+from visits.models import Visit, VisitType
+
+# Models for main app 'maintenance'
 
 admin.site.register(Customer)
 admin.site.register(Contract)
 admin.site.register(Soldby)
 admin.site.register(Mulchcolor)
+
+
+# Models for 2nd app 'visits'
+admin.site.register(Visit)
+admin.site.register(VisitType)
