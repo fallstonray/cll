@@ -10,10 +10,22 @@ from .forms import VisitForm
 @ login_required(login_url="/login")
 def visits(request):
     visits = Visit.objects.all()
+    visits_count = visits.count()
     context = {
-        'visits': visits
+        'visits': visits, 'visits_count': visits_count,
     }
     return render(request, 'visits/visits.html', context)
+
+# below is a sample from maintenance views.py
+# @ login_required(login_url="/login")
+# def visits(request):
+#     visits = Visit.objects.all()
+#     contracts_count = contracts.count()
+    # myFilter = ContractFilter(request.GET, queryset=contracts)
+    # contracts = myFilter.qs
+    # context = {'contracts': contracts,
+    #            'contracts_count': contracts_count, 'myFilter': myFilter}
+    # return render(request, 'maintenance/maintenance.html', context)
 
 
 @ login_required(login_url="/login")

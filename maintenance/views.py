@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.forms import inlineformset_factory
 from django.db.models import Sum, Count
 from .models import *
@@ -12,6 +13,7 @@ from django.db.models.functions import Now
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.timezone import datetime
+from django.contrib import messages
 
 
 def sign_up(request):
@@ -70,9 +72,10 @@ def createCustomer(request):
         # print('Printing POST:', request.POST)
         form = CustomerForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('/')
-
+            # form.save()
+            instance = form.save()
+            # the instance.pk returns user to newly created customer
+        return redirect('customer', instance.pk)
     context = {'form': form}
     return render(request, 'maintenance/customer_form.html', context)
 
