@@ -1,0 +1,57 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% block content %}
+
+<h1>Employee Center</h1>
+<body>
+    <div class="row">
+        <div class="col-md">
+        <h7>TOTAL EMPLOYEES IN SYSTEM: <strong>{{employees_count}}</strong></h7>
+        <hr>
+
+        <div class="row">
+            <div class="col">
+                <div class="card card-body">
+                    <a class="btn btn-primary  btn-block" href="{% url 'create_employee' %}">Add New Employee</a>
+                 
+                  
+                </div>
+                
+            </div>
+        </div>
+        <br>
+        <div class="card card-body">
+            <table class="table table-sm">
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Work Phone</th>
+                    <th>Personal Phone</th>
+                    <th>State</th>
+                    <th>Drivers License</th>
+                    <th></th>
+                </tr>
+        
+                
+                    
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{employee.first_name}}</td>
+                        <td>{{employee.last_name}}</td>
+                        <td>{{employee.work_phone}}</td>
+                        <td>{{employee.personal_phone}}</td>
+                        <td>{{employee.license_state}}</td>
+                        <td>{{employee.license}}</td>
+                    </tr>
+                    {% endfor %}
+                    
+            </table>
+        </div>
+    </div>
+</body>
+<p>This is the main visits page</p>
+
+{% endblock %}
+
+<td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_visit' visits.visit.id %}">View</a></td>
+<td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_visit' visits.visit.id %}">Update</a></td>

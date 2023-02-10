@@ -8,6 +8,17 @@
         <div class="col-md">
         <h7>TOTAL VISITS IN SYSTEM: <strong>{{visits_count}}</strong></h7>
         <hr>
+
+        <div class="row">
+            <div class="col">
+                <div class="card card-body">
+                    <a class="btn btn-primary  btn-block" href="{% url 'create_visit' %}">Add New Visit</a>
+                 
+                  
+                </div>
+                
+            </div>
+        </div>
         <br>
         <div class="card card-body">
             <table class="table table-sm">
@@ -16,7 +27,8 @@
                     <th>Site Name</th>
                     <th>Visit Type</th>
                     <th>Visit Date</th>
-                    <th>Crew w/ Driver</th>
+                    <th>Crew Leader</th>
+                    <th>Crew Size</th>
                     <th>Total Man Hours</th>
                     <th>Notes</th>
                 </tr>
@@ -30,8 +42,8 @@
                         <td>{{visit.visit_type_name}}</td>
                         
                         <td>{{visit.visit_date}}</td>
-                        
-                        <td>{{visit.crewsize}}</td>
+                        <td>{{visit.crew_leader}}</td>
+                        <td>{{visit.crew_size}}</td>
                         <td>{{visit.total_man_hours}}</td>
                         <td>{{visit.notes|slice:":20"}}</td>
                     </tr>

@@ -16,28 +16,18 @@ def visits(request):
     }
     return render(request, 'visits/visits.html', context)
 
-# below is a sample from maintenance views.py
-# @ login_required(login_url="/login")
-# def visits(request):
-#     visits = Visit.objects.all()
-#     contracts_count = contracts.count()
-    # myFilter = ContractFilter(request.GET, queryset=contracts)
-    # contracts = myFilter.qs
-    # context = {'contracts': contracts,
-    #            'contracts_count': contracts_count, 'myFilter': myFilter}
-    # return render(request, 'maintenance/maintenance.html', context)
-
 
 @ login_required(login_url="/login")
-@ permission_required("visit.add_customer", login_url="/login", raise_exception=True)
+@ permission_required("visit.add_visit", login_url="/login", raise_exception=True)
 def createVisit(request):
-    form = VisitForm(initial={'visit': visit})
+    form = VisitForm()
+    # form = VisitForm(initial={'visit': visit})
     if request.method == 'POST':
         # print('Printing POST:', request.POST)
         form = VisitForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect('/visits/')
 
     context = {'form': form}
     return render(request, 'visits/visit_form.html', context)

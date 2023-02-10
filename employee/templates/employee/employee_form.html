@@ -1,0 +1,30 @@
+{% extends 'maintenance/main.html' %}
+{% load static %}
+{% load humanize %}
+<!-- {% load crispy_forms_tags %} -->
+{% load crispy_forms_filters %}
+{% block content %}
+
+<h1>Please enter employee details.</h1>
+<hr>
+<body>
+    <form actions="" method="POST">
+        <div class="row">
+            <div class="col-sm-12"> 
+    
+                {% csrf_token %}
+                {{form|crispy}}
+                </table><BR>
+                <input class="btn btn-primary" type="submit" name="Submit">
+                <a class="btn btn-danger" href="{% url 'employees' %}">Cancel</a>
+    
+    
+            </div>
+        </div>
+    
+        
+    </form>
+
+</body>
+
+{% endblock %}

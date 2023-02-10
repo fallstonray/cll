@@ -17,7 +17,9 @@ class Visit(models.Model):
         'maintenance.Contract', null=True, on_delete=models.SET_NULL)
     visit_date = models.DateField(
         default=date.today, null=True, blank=True)
-    crewsize = models.CharField(max_length=128, blank=False)
+    crew_leader = models.ForeignKey(
+        'employee.Employee', null=True, on_delete=models.SET_NULL)
+    crew_size = models.CharField(max_length=128, blank=False)
     total_man_hours = models.FloatField(blank=False)
     notes = models.CharField(max_length=1024, null=True, blank=True)
     # created_at = models.DateTimeField(auto_now=True, null=True)
