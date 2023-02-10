@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.forms import inlineformset_factory
 from django.db.models import Sum, Count
 from .models import *
+from visits.models import Visit, VisitType
 from .forms import ContractForm, CustomerForm, RegisterForm
 from .filters import ContractFilter, CustomerFilter
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -204,6 +205,15 @@ def copyContract(request, pk):
 @ login_required(login_url="/login")
 def viewContract(request, pk):
     contract = Contract.objects.get(id=pk)
+    # changes below for adding site visits
+    # site_visits = Visit.objects.filter(
+    #     contract == id
+    # )
+
+    # active_contracts = contracts.filter(
+    #     end_date__gte=datetime.now())
+    # total_active_contracts = active_contracts.count()
+    # above for site visits
     context = {'contract': contract}
     # context = {'customer': customer,
     #            'contract': contract, 'visits': contract.visits, 'flowers_fall': contract.flowers_fall, 'mulch_fall': contract.mulch_fall}

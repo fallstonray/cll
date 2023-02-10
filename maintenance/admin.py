@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 from visits.models import Visit, VisitType
-from employee.models import Employee
+from employee.models import Employee, Position
 
 # Models for main app 'maintenance'
 
@@ -17,3 +17,4 @@ admin.site.register(VisitType)
 
 # Models for 3rd app 'employee'
 admin.site.register(Employee)
+admin.site.register(Position)
