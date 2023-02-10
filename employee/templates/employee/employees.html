@@ -30,6 +30,7 @@
                     <th>Personal Phone</th>
                     <th>State</th>
                     <th>Drivers License</th>
+                    <th>View</th>
                     <th></th>
                 </tr>
         
@@ -44,6 +45,7 @@
                         <td>{{employee.personal_phone}}</td>
                         <td>{{employee.license_state}}</td>
                         <td>{{employee.license}}</td>
+                        <td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_employee' employee.id %}">View</a></td>
                     </tr>
                     {% endfor %}
                     
