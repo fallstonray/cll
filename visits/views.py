@@ -3,7 +3,7 @@ from .models import *
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from .forms import VisitForm
-
+from .filters import VisitsFilter
 # Create your views here.
 
 
@@ -11,8 +11,10 @@ from .forms import VisitForm
 def visits(request):
     visits = Visit.objects.all()
     visits_count = visits.count()
+    myFilter = VisitsFilter(request.GET, queryset=visits)
+    visits = myFilter.qs
     context = {
-        'visits': visits, 'visits_count': visits_count,
+        'visits': visits, 'visits_count': visits_count, 'myFilter': myFilter,
     }
     return render(request, 'visits/visits.html', context)
 

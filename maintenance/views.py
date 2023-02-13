@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.forms import inlineformset_factory
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, F, ExpressionWrapper, FloatField
 from .models import *
 from visits.models import Visit, VisitType
 from .forms import ContractForm, CustomerForm, RegisterForm
@@ -172,8 +172,9 @@ def createContract(request, pk):
         # print('Printing POST:', request.POST)
         form = ContractForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('view_contract', pk)
+            instance = form.save()
+            # form.save()
+            return redirect('view_contract', instance.pk)
     context = {'form': form}
     return render(request, 'maintenance/contract_form.html', context)
 
@@ -205,16 +206,12 @@ def copyContract(request, pk):
 @ login_required(login_url="/login")
 def viewContract(request, pk):
     contract = Contract.objects.get(id=pk)
-    # changes below for adding site visits
-    # site_visits = Visit.objects.filter(
-    #     contract == id
-    # )
-
-    # active_contracts = contracts.filter(
-    #     end_date__gte=datetime.now())
-    # total_active_contracts = active_contracts.count()
-    # above for site visits
-    context = {'contract': contract}
+    price = float(contract.price)
+    payments = float(contract.payments)
+    # print(type(payments))
+    payment_amount = price / payments
+    # visit_list = filter(models.visit.)
+    context = {'contract': contract, 'payment_amount': payment_amount}
     # context = {'customer': customer,
     #            'contract': contract, 'visits': contract.visits, 'flowers_fall': contract.flowers_fall, 'mulch_fall': contract.mulch_fall}
     return render(request, 'maintenance/contract_view.html', context)

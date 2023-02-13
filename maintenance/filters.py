@@ -1,6 +1,7 @@
 import django_filters
 from django_filters import DateFilter, CharFilter
 from .models import *
+from visits.models import Visit
 
 
 class ContractFilter(django_filters.FilterSet):
@@ -22,3 +23,10 @@ class CustomerFilter(django_filters.FilterSet):
         model = Customer
         fields = ['name']
         # exclude = ['customer', 'date_created']
+
+# Each app requires its own filters.py
+# Lesson learned :)
+# class VisitsFilter(django_filters.FilterSet):
+#     class Meta:
+#         model = Visit
+#         fields = '__all__'

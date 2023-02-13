@@ -22,12 +22,17 @@
 			<hr>
 			<p><strong>Description:</strong> {{contract.contract_description}}<br>
 				<strong>Location:</strong> {{contract.location}}<br>
+				<br>
 				<strong>Start Date:</strong> {{contract.start_date}}<br>
 				<strong>End Date:</strong> {{contract.end_date}}<br>
+				<br>
 				<strong>Price: $</strong> {{contract.price|floatformat:2|intcomma}}<br>
 				<strong>Payments:</strong> {{contract.payments}} <br>
+				<strong>Payment Amount: $</strong> {{payment_amount|floatformat:2|intcomma}} <br>
+				<br>
 				<strong>Sales Rep:</strong> {{contract.salesrep}}<br>
-				<strong>Customer Contact:</strong> {{contract.customer.contact_name}}
+				<strong>Customer Contact:</strong> {{contract.customer.contact_name}}<br>
+				<strong>Customer Phone:</strong> {{contract.customer.phone1}}
 
 			</p>
 		</div>
@@ -35,17 +40,46 @@
 
 	<div class="col-md">
 		<div class="card card-body">
-			<h4>Site Details</h4>
+			<h4>Turf Details</h4>
 			<hr>
 			<p>
-				<strong>Amount of Visits:  {{contract.visits}}</strong><br>
+				<strong>Amount of Cuts: </strong> {{contract.visits}}<br>
 				<strong>Square Ft Turf: </strong> {{contract.sq_turf|intcomma}}<br>
+
+				<strong>Total Hours: </strong>{{contract.hours_total_contract}}<br>
+				<br>
+				<strong>Turf Apps: </strong> {% if contract.turf_apps is True %}
+					Yes 
+					{% else %}
+					No
+					{% endif %}<br>
+					{% if contract.turf_apps is True %}
+					<strong>Turf Apps Count: </strong> {{contract.turf_apps_count}}<br>
+					{% else %}
+					{% endif %}
+					<strong>Aeration & Overseed: </strong>{% if contract.aeration_overseed is True %}
+					Yes 
+					{% else %}
+					No
+					{% endif %}<br>
+			</p>
+			<br>
+			<h4>Mulch Details</h4>
+			<hr>
+			<p>
 				<strong>Square Ft Mulch: </strong>{{contract.sq_mulch|intcomma}}<br>
 				<strong>Tree Rings: </strong>{{contract.tree_rings}}<br>
 				<strong>Mulch Cubic Yards: </strong>{{contract.mulch_yd}}<br>
 				<strong>Mulch Color: </strong>{{contract.mulch_color}}<br>
-				<strong>Total Hours: </strong>{{contract.hours_total_contract}}<br>
-				<strong>Leaf Clean Ups: </strong>{{contract.leaf_cleanup}}<br>
+				<strong>Fall Mulch: </strong> {% if contract.mulch_fall is True %}
+				Yes 
+				{% else %}
+				No
+				{% endif %}<br>
+				
+				<br>
+		
+				<br>
 				{% if customer.billing_add2 %}
 				<strong></strong>Address: {{customer.billing_add2}}<br>
 				{% endif %}
@@ -57,43 +91,44 @@
 
 	<div class="col-md">
 		<div class="card card-body">
+			<h4>Flowers</h4>
+			<hr>
+			<p>
+				<strong>Spring Flowers: </strong> {% if contract.flowers_spring %}
+					{{contract.flowers_spring}} 
+				{% else %}
+					None
+				{% endif %}<br>
+				<strong>Fall Flowers: </strong> {% if contract.flowers_fall %}
+					{{contract.flowers_fall}} 
+				{% else %}
+					None
+				{% endif %}<br>
+				
+
+				
+			</p>	
+			<br>
+			<h4>Irrigation</h4>
+			<hr>
+			<p>	
+
+				<strong>Irrigation Startup & Winterization: </strong> {% if contract.irrigation is True %}
+				Yes 
+				{% else %}
+				No
+				{% endif %}<br>
+				<strong>Irrigation Inspections: </strong> {{contract.irrigation_inspections}}
+				
+			</p>
+			<br>
 			<h4>Other Services</h4>
 			<hr>
-			<strong>Aeration & Overseed: </strong>{% if contract.aeration_overseed is True %}
-				Yes 
-			{% else %}
-				No
-			{% endif %}<br>
-			<strong>Turf Apps: </strong> {% if contract.turf_apps is True %}
-			Yes 
-			{% else %}
-			No
-			{% endif %}<br>
-			{% if contract.turf_apps is True %}
-			<strong>Turf Apps Count: </strong> {{contract.turf_apps_count}}<br>
-			{% else %}
-			{% endif %}
-			<strong>Irrigation Startup & Winterization: </strong> {% if contract.irrigation is True %}
-			Yes 
-			{% else %}
-			No
-			{% endif %}<br>
-			<strong>Irrigation Inspections: </strong> {{contract.irrigation_inspections}}
-			<strong>Spring Flowers: </strong> {% if contract.flowers_spring %}
-				{{contract.flowers_spring}} 
-			{% else %}
-				None
-			{% endif %}<br>
-			<strong>Fall Flowers: </strong> {% if contract.flowers_fall %}
-				{{contract.flowers_fall}} 
-			{% else %}
-				None
-			{% endif %}<br>
-			<strong>Fall Mulch: </strong> {% if contract.mulch_fall is True %}
-			Yes 
-			{% else %}
-			No
-			{% endif %}<br>
+			<p>	
+
+				<strong>Leaf Clean Ups: </strong>{{contract.leaf_cleanup}}<br>
+				
+			</p>
 	
 
 		</div>
