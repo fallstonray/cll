@@ -1,3 +1,6 @@
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -8,7 +11,7 @@ from visits.models import Visit, VisitType
 from .forms import ContractForm, CustomerForm, RegisterForm
 from .filters import ContractFilter, CustomerFilter
 from django.contrib.humanize.templatetags.humanize import intcomma
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
 from datetime import date, datetime, timedelta
 from django.db.models.functions import Now
 from django.contrib.auth import login, logout, authenticate
@@ -240,3 +243,17 @@ def deleteContract(request, pk):
 
     context = {'item': contract}
     return render(request, 'maintenance/delete.html', context)
+
+
+# from https://dev.to/earthcomfy/django-reset-password-3k0l
+
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'maintenance/password_reset.html'
+    email_template_name = 'maintenance/password_reset_email.html'
+    subject_template_name = 'maintenance/password_reset_subject'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('home')

@@ -38,6 +38,7 @@ ALLOWED_HOSTS = ['cll.pythonanywhere.com', '*']
 # Application definition
 
 INSTALLED_APPS = [
+    #    'maintenance',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -97,7 +98,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'cll2023',
         'USER': 'postgres',
-        'PASSWORD': '7223',
+        'PASSWORD': 'new_password',
+        #        'PASSWORD': '7223',
         'HOST': 'localhost',
         'PORT': '5432',
         # Below is the working sqlite originally used to develope with
@@ -161,3 +163,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/home'
 LOGOUT_REDIRECT_URL = '/login'
+
+# SMPT Configuration
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '587'
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'raycorkran@gmail.com'
+EMAIL_HOST_PASSWORD = 'szbruohwnvgsrhti'

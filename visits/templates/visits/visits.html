@@ -48,7 +48,8 @@
         
                 
                     
-                    {% for visit in visits %}
+                    {% for visit in visits reversed %}
+                    {% if forloop.counter <= 5 %}
                     <tr>
                         <td>{{visit.contract.customer}}</td>
                         <td>{{visit.contract}}</td>
@@ -60,6 +61,7 @@
                         <td>{{visit.total_man_hours}}</td>
                         <td>{{visit.notes|slice:":20"}}</td>
                     </tr>
+                    {% endif %}
                     {% endfor %}
                     
             </table>
