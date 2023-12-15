@@ -13,7 +13,7 @@ class VisitType(models.Model):
 class Visit(models.Model):
     visit_type_name = models.ForeignKey(
         'VisitType', null=True, on_delete=models.SET_NULL)
-    contract = models.ForeignKey(
+    visit_contract = models.ForeignKey(
         'maintenance.Contract', null=True, on_delete=models.SET_NULL)
     visit_date = models.DateField(
         default=date.today, null=True, blank=True)

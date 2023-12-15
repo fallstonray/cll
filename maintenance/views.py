@@ -20,6 +20,7 @@ from django.utils.timezone import datetime
 from django.contrib import messages
 
 
+
 def sign_up(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -213,10 +214,17 @@ def viewContract(request, pk):
     payments = float(contract.payments)
     # print(type(payments))
     payment_amount = price / payments
-    # visit_list = filter(models.visit.)
-    context = {'contract': contract, 'payment_amount': payment_amount}
-    # context = {'customer': customer,
-    #            'contract': contract, 'visits': contract.visits, 'flowers_fall': contract.flowers_fall, 'mulch_fall': contract.mulch_fall}
+    visit_man_hours = float(0)
+    visits = Visit.objects.filter(visit_contract=contract)
+    for visit in visits:
+        visit_man_hours += float(visit.total_man_hours)
+    print(visit_man_hours)
+    # th = float(0)
+    # th = sum(float(visit.total_man_hours))       
+    # print(type(th))
+
+    visits_count = visits.count()
+    context = {'contract': contract, 'payment_amount': payment_amount, 'visits': visits, 'visits_count': visits_count, 'visit_man_hours': visit_man_hours}
     return render(request, 'maintenance/contract_view.html', context)
 
 

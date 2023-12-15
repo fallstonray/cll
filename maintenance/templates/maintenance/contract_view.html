@@ -136,6 +136,11 @@
 <p></p>
 <br>
 
+<div class="d-grid gap-2 d-md-block">
+	<a class="btn btn-primary" href="{% url 'update_contract' contract.id %}">Update Contract</a>
+	<a class="btn btn-primary" href="{% url 'customer' contract.customer.id %}">Goto Customer</a>
+</div>
+
 <p></p>
 <div class="row">
 	<div class="col">
@@ -146,19 +151,45 @@
 		</div>
 	</div>
 	<br>
+</div>
+<p></p>
+<div class="row">
 	<div class="col">
 		<div class="card card-body">
-			<strong>Site Visits: </strong> 
+			<strong>Total Site Visits:   {{visits.count}} <br> Total Man Hours to Date:    {{ visit_man_hours }}</strong> 
 			<hr>
 			{{site_visits}}<br>  
+			<div class="card card-body">
+				<table class="table table-lg">
+					<tr>
+					<th>Customer</th>
+					<th>Site Name</th>
+					<th>Visit Type</th>
+					<th>Visit Date</th>
+					<th>Crew Leader</th>
+					<th>Crew Size</th>
+					<th>Man Hours</th>
+					</tr>
+					<tr>
+					{% for visit in visits %}	
+					<td>{{contract.customer}}</td>
+					<td>{{contract.site_name}}</td>
+					<td>{{visit.visit_type_name}}</td>	
+					<td>{{visit.visit_date}}</td>
+					<td>{{visit.crew_leader}}</td>
+					<td>{{visit.crew_size}}</td>
+					<td>{{visit.total_man_hours}}</td>
+					</tr>
+					{% endfor %}
+				</table>	
+			</div>
 		</div>
 	</div>
 </div>
+</div>
 <p></p>
-<div class="d-grid gap-2 d-md-block">
-	<a class="btn btn-primary" href="{% url 'update_contract' contract.id %}">Update Contract</a>
-	<a class="btn btn-primary" href="{% url 'customer' contract.customer.id %}">Goto Customer</a>
-  </div>
+<br>
+
 
 
 
