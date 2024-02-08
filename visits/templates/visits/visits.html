@@ -48,7 +48,7 @@
                 
                     
                     {% for visit in visits reversed %}
-                    {% if forloop.counter <= 5 %}
+                    {% if forloop.counter <= 10 %}
                     <tr>
                         <td>{{visit.visit_contract}}</td>
                         <td>{{visit.visit_type_name}}</td>
