@@ -36,7 +36,6 @@
         <div class="card card-body">
             <table class="table table-sm">
                 <tr>
-                    <th>Customer</th>
                     <th>Site Name</th>
                     <th>Visit Type</th>
                     <th>Visit Date</th>
@@ -51,10 +50,8 @@
                     {% for visit in visits reversed %}
                     {% if forloop.counter <= 5 %}
                     <tr>
-                        <td>{{maintenance.customer}}</td>
                         <td>{{visit.visit_contract}}</td>
                         <td>{{visit.visit_type_name}}</td>
-                        
                         <td>{{visit.visit_date}}</td>
                         <td>{{visit.crew_leader}}</td>
                         <td>{{visit.crew_size}}</td>

@@ -48,7 +48,7 @@ def get_end_date():
 
 class Contract(models.Model):
     site_name = models.CharField(max_length=200)
-    customer = models.ForeignKey(
+    site_customer = models.ForeignKey(
         Customer, null=True, on_delete=models.SET_NULL)
     contract_description = models.CharField(
         max_length=200, default='Maintenance Contract')
@@ -60,7 +60,7 @@ class Contract(models.Model):
     salesrep = models.ForeignKey(Soldby, null=True, on_delete=models.SET_NULL)
     notes = models.CharField(max_length=1024, null=True, blank=True)
 
-    visits = models.IntegerField(default=24, null=True)
+    site_visits = models.IntegerField(default=24, null=True)
     sq_turf = models.IntegerField(default=0, null=True)
     sq_mulch = models.IntegerField(default=0, null=True)
     tree_rings = models.IntegerField(default=0, null=True)
