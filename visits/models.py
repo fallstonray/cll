@@ -25,4 +25,5 @@ class Visit(models.Model):
     # created_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
-        return str(self.contract)
+        return str(self.visit_contract)
+
