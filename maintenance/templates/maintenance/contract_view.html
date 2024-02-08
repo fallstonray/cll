@@ -169,6 +169,7 @@
 					<th>Crew Leader</th>
 					<th>Crew Size</th>
 					<th>Man Hours</th>
+					<th>Notes</th>
 					</tr>
 					<tr>
 					{% for visit in visits %}	
@@ -179,6 +180,7 @@
 					<td>{{visit.crew_leader}}</td>
 					<td>{{visit.crew_size}}</td>
 					<td>{{visit.total_man_hours}}</td>
+					<td>{{visit.notes}}</td>
 					</tr>
 					{% endfor %}
 				</table>	
