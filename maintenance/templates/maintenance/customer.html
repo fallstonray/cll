@@ -90,7 +90,7 @@
 					<td>{{active.site_name}}</td>
 					<td>{{active.start_date}}</td>
 					<td>{{active.end_date}}</td>
-					<td>{{active.visits}}</td>
+					<td>{{active.site_visits}}</td>
 					<td>${{active.price|floatformat:2|intcomma}}</td>
 					<td><a class="btn btn-sm btn-info" href="{% url 'update_contract' active.id %}">Update</td>
 					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' active.id %}">View</td>
@@ -120,7 +120,7 @@
 					<td>{{expired.site_name}}</td>
 					<td>{{expired.start_date}}</td>
 					<td>{{expired.end_date}}</td>
-					<td>{{expired.visits}}</td>
+					<td>{{expired.site_visits}}</td>
 					<td>${{expired.price|floatformat:2|intcomma}}</td>
 					<td><a class="btn btn-sm btn-info" href="{% url 'copy_contract' expired.id %}">Copy</td>
 					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' expired.id %}">View</td>

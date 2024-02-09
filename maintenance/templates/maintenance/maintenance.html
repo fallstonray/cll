@@ -6,6 +6,7 @@
 <body>
 <div class="row">
     <div class="col-md">
+    <h7>TOTAL ACTIVE CONTRACTS IN SYSTEM: <strong>{{total_active_contracts}}</strong></h7><br>
     <h7>TOTAL CONTRACTS IN SYSTEM: <strong>{{contracts_count}}</strong></h7>
     <hr>
     <div class="row">
@@ -37,7 +38,7 @@
     
             
                 
-                {% for contract in contracts %}
+                {% for contract in active_contracts %}
                 <tr>
                     <td>{{contract.site_customer}}</td>
                     <td>{{contract.site_name}}</td>
@@ -45,7 +46,7 @@
                     <td>{{contract.salesrep}}</td>
                     <td>{{contract.start_date}}</td>
                     <td>{{contract.end_date}}</td>
-                    <td>{{contract.visits}}</td>
+                    <td>{{contract.site_visits}}</td>
                     <td>${{contract.price|floatformat:2|intcomma}}</td>
                     <td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_contract' contract.id %}">View</a></td>
                     <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.id %}">Update</a></td>
