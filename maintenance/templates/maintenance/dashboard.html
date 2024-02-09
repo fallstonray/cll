@@ -82,7 +82,7 @@
 					</tr>
 					{% for list in expire_list %}
 					<tr>    
-						<td>{{list.customer}}</td>
+						<td>{{list.site_customer}}</td>
 						<td>{{list.site_name}}</td>
 						<td>{{list.end_date}}</td>
 						<td><a class="btn btn-sm btn-info" href="{% url 'view_contract' list.id %}">View</a></td>          
