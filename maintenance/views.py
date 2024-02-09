@@ -157,16 +157,18 @@ def updateCustomer(request, pk):
 
 @ login_required(login_url="/login")
 def maintenance(request):
-    contracts = Contract.objects.all()
-    contracts_count = contracts.count()
+    all_contracts = Contract.objects.all()
+    contracts_count = all_contracts.count()
+
+    myFilter = ContractFilter(request.GET, queryset=all_contracts)
+    contracts = myFilter.qs
 
     active_contracts = contracts.filter(
         end_date__gte=datetime.now())
     total_active_contracts = active_contracts.count()
 
-    myFilter = ContractFilter(request.GET, queryset=contracts)
-    contracts = myFilter.qs
-    context = {'active_contracts': active_contracts,
+    
+    context = {'all_contracts': all_contracts, 'active_contracts': active_contracts, 
                'contracts_count': contracts_count, 'myFilter': myFilter, 'total_active_contracts': total_active_contracts}
 
     return render(request, 'maintenance/maintenance.html', context)

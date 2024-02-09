@@ -162,7 +162,6 @@
 			<div class="card card-body">
 				<table class="table table-lg">
 					<tr>
-					<th>Customer</th>
 					<th>Site Name</th>
 					<th>Visit Type</th>
 					<th>Visit Date</th>
@@ -173,7 +172,6 @@
 					</tr>
 					<tr>
 					{% for visit in visits %}	
-					<td>{{contract.customer}}</td>
 					<td>{{contract.site_name}}</td>
 					<td>{{visit.visit_type_name}}</td>	
 					<td>{{visit.visit_date}}</td>
