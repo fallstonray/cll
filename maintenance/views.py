@@ -18,6 +18,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.timezone import datetime
 from django.contrib import messages
+from django.forms.models import model_to_dict #this is for copyContract line 197
+from django.db.models.fields.related import ForeignKey #this is for copyContract line 197
 
 
 
@@ -194,13 +196,30 @@ def createContract(request, pk):
 
 @ login_required(login_url="/login")
 def copyContract(request, pk):
-    contract = Contract.objects(id=pk)
+    original_contract = Contract.objects.get(id=pk)
+    contract_data = model_to_dict(original_contract) #new 2-21-25
+
+    # if 'site_customer' in contract_data:
+    #     contract_data['site_customer'] = original_contract.site_customer   
+    # if 'salesrep' in contract_data:
+    #     contract_data['salesrep'] = original_contract.salesrep
+    # if 'mulch_color' in contract_data:
+    #     contract_data['mulch_color'] = original_contract.mulch_color
+
+    for field in Contract._meta.get_fields(): #this for field code replaces all the if statments above
+        if isinstance(field, ForeignKey):
+            field_name = field.name
+            if field_name in contract_data:
+                contract_data[field_name] = getattr(original_contract, field_name)
+
+    contract_data = Contract(**contract_data)  
+    contract = contract_data
     contract.pk = None
     contract.save()
 
-    site_name = Contract.objects.filter(id=pk)
-    form = ContractForm(
-        initial={'customer': customer})
+    # site_name = Contract.objects.filter(id=pk)
+    # form = ContractForm(
+    #     initial={'customer': customer})
     # form = ContractForm(
     #     initial={'customer': customer, 'site_name': Contract.site_name, 'contract.price': Contract.price})
     if request.method == 'POST':
@@ -210,8 +229,11 @@ def copyContract(request, pk):
             form.save()
             return redirect('/')
 
-    context = {'form': form}
-    return render(request, 'maintenance/contract_form.html', context)
+    # context = {'form': form}
+    # return render(request, 'maintenance/contract_form.html', context)
+    # return render(request, 'maintenance/contract_form.html')
+    return redirect('update_contract', pk=contract.pk)
+
 
 
 # below was copied from def customer and modified
