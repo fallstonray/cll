@@ -9,3 +9,6 @@ class VisitForm(ModelForm):
     class Meta:
         model = Visit
         fields = '__all__'
+        widgets = {
+            'visit_date': forms.DateInput(attrs={'type': 'date'})
+        }
