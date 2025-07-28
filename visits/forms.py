@@ -12,3 +12,9 @@ class VisitForm(ModelForm):
         widgets = {
             'visit_date': forms.DateInput(attrs={'type': 'date'})
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ensure the dropdown for contract is alphabetically ordered
+        self.fields['visit_contract'].queryset = Contract.objects.order_by('site_name')  
+        # Replace 'name' with the actual field you want to order by

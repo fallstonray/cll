@@ -17,7 +17,11 @@ class ContractForm(ModelForm):
     class Meta:
         model = Contract
         fields = '__all__'
-
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'})
+        }
+        
 
 class CustomerForm(ModelForm):
     class Meta:
