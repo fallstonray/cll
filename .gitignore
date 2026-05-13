@@ -1,4 +1,21 @@
-settings.py
+# Local environment / secrets
 .env
-cll.code-workspace
+# Local database
 db.sqlite3
+
+# VS Code workspace
+cll.code-workspace
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+.venv-py313-old/
+venv/
+
+# Django/static local files
+staticfiles/
+media/
