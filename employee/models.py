@@ -19,6 +19,7 @@ class Employee(models.Model):
     personal_phone = PhoneField(E164_only=False, blank=True, null=True)
     license_state = models.CharField(max_length=2, default="MD")
     license = models.CharField(max_length=120, unique=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)

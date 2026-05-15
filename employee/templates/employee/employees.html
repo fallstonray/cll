@@ -2,21 +2,23 @@
 {% load humanize %}
 {% block content %}
 
-<h1>Employee Center</h1>
+<h1>{% if show_inactive %}Inactive Employees{% else %}Employee Center{% endif %}</h1>
 <body>
     <div class="row">
         <div class="col-md">
-        <h7>TOTAL EMPLOYEES IN SYSTEM: <strong>{{employees_count}}</strong></h7>
+        <h7>{% if show_inactive %}INACTIVE{% else %}ACTIVE{% endif %} EMPLOYEES: <strong>{{employees_count}}</strong></h7>
         <hr>
 
         <div class="row">
             <div class="col">
-                <div class="card card-body">
-                    <a class="btn btn-primary  btn-block" href="{% url 'create_employee' %}">Add New Employee</a>
-                 
-                  
+                <div class="card card-body d-flex flex-row gap-2">
+                    {% if not show_inactive %}
+                    <a class="btn btn-primary btn-block" href="{% url 'create_employee' %}">Add New Employee</a>
+                    <a class="btn btn-secondary btn-block" href="{% url 'inactive_employees' %}">Inactive Employees</a>
+                    {% else %}
+                    <a class="btn btn-primary btn-block" href="{% url 'employees' %}">Active Employees</a>
+                    {% endif %}
                 </div>
-                
             </div>
         </div>
         <br>

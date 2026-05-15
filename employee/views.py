@@ -9,10 +9,20 @@ from .forms import EmployeeForm
 
 @ login_required(login_url="/login")
 def employees(request):
-    employees = Employee.objects.all()
+    employees = Employee.objects.filter(is_active=True)
     employees_count = employees.count()
     context = {
-        'employees': employees, 'employees_count': employees_count,
+        'employees': employees, 'employees_count': employees_count, 'show_inactive': False,
+    }
+    return render(request, 'employee/employees.html', context)
+
+
+@ login_required(login_url="/login")
+def inactive_employees(request):
+    employees = Employee.objects.filter(is_active=False)
+    employees_count = employees.count()
+    context = {
+        'employees': employees, 'employees_count': employees_count, 'show_inactive': True,
     }
     return render(request, 'employee/employees.html', context)
 

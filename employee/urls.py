@@ -6,6 +6,7 @@ from maintenance.models import Contract, Customer
 
 urlpatterns = [
     path('employees/', views.employees, name='employees'),
+    path('employees/inactive/', views.inactive_employees, name='inactive_employees'),
     path('create_employee/',
          views.createEmployee, name='create_employee'),
     path('view_employee/<str:pk>/',
