@@ -66,6 +66,17 @@
 					{{myFilter.form}}
 		    <button class="btn btn-primary" type="submit">Search</button>
 		  </form>
+		  <script>
+		    (function () {
+		      const input = document.querySelector('form[method="get"] input[type="text"]');
+		      if (!input) return;
+		      let timer;
+		      input.addEventListener('input', function () {
+		        clearTimeout(timer);
+		        timer = setTimeout(function () { input.closest('form').submit(); }, 300);
+		      });
+		    })();
+		  </script>
 		</div>
 	</div>
 </div>
