@@ -44,21 +44,21 @@ def createEmployee(request):
 
 
 @ login_required(login_url="/login")
-def viewEmployee(request, pk):
-    employee = Employee.objects.get(id=pk)
+def viewEmployee(request, uuid):
+    employee = Employee.objects.get(uuid=uuid)
     context = {'employee': employee}
     return render(request, 'employee/employee_view.html', context)
 
 
 @ login_required(login_url="/login")
-def updateEmployee(request, pk):
-    employee = Employee.objects.get(id=pk)
+def updateEmployee(request, uuid):
+    employee = Employee.objects.get(uuid=uuid)
     form = EmployeeForm(instance=employee)
 
     if request.method == 'POST':
         form = EmployeeForm(request.POST, instance=employee)
         if form.is_valid():
             form.save()
-            return redirect('view_employee', pk)
+            return redirect('view_employee', uuid)
     context = {'form': form}
     return render(request, 'employee/employee_form.html', context)

@@ -82,7 +82,7 @@ def createCustomer(request):
             # form.save()
             instance = form.save()
             # the instance.pk returns user to newly created customer
-        return redirect('customer', instance.pk)
+        return redirect('customer', instance.uuid)
     context = {'form': form}
     return render(request, 'maintenance/customer_form.html', context)
 
@@ -104,8 +104,8 @@ def customers(request):
 
 
 @ login_required(login_url="/login")
-def customer(request, pk):
-    customer = Customer.objects.get(id=pk)
+def customer(request, uuid):
+    customer = Customer.objects.get(uuid=uuid)
     contracts = customer.contract_set.all()
     # print(contracts)
     # contracts_count = contracts.count()
@@ -133,15 +133,15 @@ def customer(request, pk):
 
 # below is the view for updating a customer
 @ login_required(login_url="/login")
-def updateCustomer(request, pk):
-    customer = Customer.objects.get(id=pk)
+def updateCustomer(request, uuid):
+    customer = Customer.objects.get(uuid=uuid)
     form = CustomerForm(instance=customer)
 
     if request.method == 'POST':
         form = CustomerForm(request.POST, instance=customer)
         if form.is_valid():
             form.save()
-            return redirect('customer', pk)
+            return redirect('customer', uuid)
     context = {'form': form}
     return render(request, 'maintenance/customer_form.html', context)
 
@@ -170,27 +170,24 @@ def maintenance(request):
 
 
 @ login_required(login_url="/login")
-def createContract(request, pk):
-    # customer = Customer.objects.get(id=pk) ~ this used to work but stopped, changed get to filter
-    customer = Customer.objects.get(id=pk)
+def createContract(request, uuid):
+    customer = Customer.objects.get(uuid=uuid)
     form = ContractForm(initial={'customer': customer})
     if request.method == 'POST':
-        # print('Printing POST:', request.POST)
         form = ContractForm(request.POST)
         if form.is_valid():
             instance = form.save()
-            # form.save()
-            return redirect('view_contract', instance.pk)
+            return redirect('view_contract', instance.uuid)
     context = {'form': form}
     return render(request, 'maintenance/contract_form.html', context)
 
 
 @ login_required(login_url="/login")
-def copyContract(request, pk):
+def copyContract(request, uuid):
     if request.method != 'POST':
-        return redirect('view_contract', pk)
+        return redirect('view_contract', uuid)
 
-    original_contract = Contract.objects.get(id=pk)
+    original_contract = Contract.objects.get(uuid=uuid)
     contract_data = model_to_dict(original_contract)
 
     for field in Contract._meta.get_fields():
@@ -203,15 +200,15 @@ def copyContract(request, pk):
     contract.pk = None
     contract.save()
 
-    return redirect('update_contract', pk=contract.pk)
+    return redirect('update_contract', contract.uuid)
 
 
 
 # below was copied from def customer and modified
 
 @ login_required(login_url="/login")
-def viewContract(request, pk):
-    contract = Contract.objects.get(id=pk)
+def viewContract(request, uuid):
+    contract = Contract.objects.get(uuid=uuid)
     price = float(contract.price)
     payments = float(contract.payments)
     # print(type(payments))
@@ -230,22 +227,22 @@ def viewContract(request, pk):
 
 
 @ login_required(login_url="/login")
-def updateContract(request, pk):
-    contract = Contract.objects.get(id=pk)
+def updateContract(request, uuid):
+    contract = Contract.objects.get(uuid=uuid)
     form = ContractForm(instance=contract)
 
     if request.method == 'POST':
         form = ContractForm(request.POST, instance=contract)
         if form.is_valid():
             form.save()
-            return redirect('view_contract', pk)
+            return redirect('view_contract', uuid)
     context = {'form': form}
     return render(request, 'maintenance/contract_form.html', context)
 
 
 @ login_required(login_url="/login")
-def deleteContract(request, pk):
-    contract = Contract.objects.get(id=pk)
+def deleteContract(request, uuid):
+    contract = Contract.objects.get(uuid=uuid)
     if request.method == 'POST':
         contract.delete()
         return redirect('/')

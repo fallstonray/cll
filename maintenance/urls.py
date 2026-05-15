@@ -12,21 +12,21 @@ urlpatterns = [
     path('customers/', views.customers, name='customers'),
     path('create_customer/',
          views.createCustomer, name="create_customer"),
-    path('customer/<str:pk>/', views.customer, name="customer"),
-    path('update_customer/<str:pk>/',
+    path('customer/<uuid:uuid>/', views.customer, name="customer"),
+    path('update_customer/<uuid:uuid>/',
          views.updateCustomer, name="update_customer"),
 
     path('maintenance/', views.maintenance, name="maintenance"),
 
-    path('create_contract/<str:pk>/',
+    path('create_contract/<uuid:uuid>/',
          views.createContract, name="create_contract"),
-    path('view_contract/<str:pk>/',
+    path('view_contract/<uuid:uuid>/',
          views.viewContract, name="view_contract"),
-    path('update_contract/<str:pk>/',
+    path('update_contract/<uuid:uuid>/',
          views.updateContract, name="update_contract"),
-    path('copy_contract/<str:pk>/',
+    path('copy_contract/<uuid:uuid>/',
          views.copyContract, name="copy_contract"),
-    path('delete_contract/<str:pk>/',
+    path('delete_contract/<uuid:uuid>/',
          views.deleteContract, name="delete_contract"),
 
 

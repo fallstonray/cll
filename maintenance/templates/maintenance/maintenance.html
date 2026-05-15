@@ -58,8 +58,8 @@
                     <td>{{contract.end_date}}</td>
                     <td>{{contract.site_visits}}</td>
                     <td>${{contract.price|floatformat:2|intcomma}}</td>
-                    <td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_contract' contract.id %}">View</a></td>
-                    <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.id %}">Update</a></td>
+                    <td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_contract' contract.uuid %}">View</a></td>
+                    <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.uuid %}">Update</a></td>
                 </tr>
                 {% endfor %}
                 

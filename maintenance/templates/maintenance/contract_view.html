@@ -137,8 +137,8 @@
 <br>
 
 <div class="d-grid gap-2 d-md-block">
-	<a class="btn btn-primary" href="{% url 'update_contract' contract.id %}">Update Contract</a>
-	<a class="btn btn-primary" href="{% url 'customer' contract.site_customer.id %}">Goto Customer</a>
+	<a class="btn btn-primary" href="{% url 'update_contract' contract.uuid %}">Update Contract</a>
+	<a class="btn btn-primary" href="{% url 'customer' contract.site_customer.uuid %}">Goto Customer</a>
 </div>
 
 <p></p>

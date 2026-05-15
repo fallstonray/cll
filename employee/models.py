@@ -1,5 +1,6 @@
 from django.db import models
 from phone_field import PhoneField
+import uuid
 # Create your models here.
 
 
@@ -19,6 +20,7 @@ class Employee(models.Model):
     personal_phone = PhoneField(E164_only=False, blank=True, null=True)
     license_state = models.CharField(max_length=2, default="MD")
     license = models.CharField(max_length=120, unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

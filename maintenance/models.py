@@ -1,6 +1,7 @@
 from django.db import models
 from phone_field import PhoneField
 from datetime import date, timedelta
+import uuid
 
 
 class Customer(models.Model):
@@ -14,6 +15,7 @@ class Customer(models.Model):
     phone1 = PhoneField(E164_only=False, blank=True, null=True)
     phone2 = PhoneField(blank=True, null=True)
     email = models.EmailField(max_length=254, null=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     notes = models.CharField(max_length=1024, null=True, blank=True)
     billing_name = models.CharField(max_length=128, blank=True, null=True)
@@ -80,6 +82,7 @@ class Contract(models.Model):
     flowers_spring = models.IntegerField(default=0, null=True)
     flowers_fall = models.IntegerField(default=0, null=True)
 
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     is_active = models.BooleanField(default=True)
 

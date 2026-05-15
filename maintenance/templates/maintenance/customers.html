@@ -55,7 +55,7 @@
                     <td>{{customer.contact_name}}</td>
                     <td>{{customer.phone1}}</td>
                     <td>{{customer.phone2}}</td>
-                    <td><a class="btn btn-info  btn-sm btn-block" href="{% url 'customer' customer.id %}">View</a></td>
+                    <td><a class="btn btn-info  btn-sm btn-block" href="{% url 'customer' customer.uuid %}">View</a></td>
                 </tr>
                 {% endfor %}
                 

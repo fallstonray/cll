@@ -9,8 +9,8 @@
 		<div class="card card-body">
 			<h5>Customer: {{customer.name}}</h5>
 			<hr>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'update_customer' customer.id %}">Update Customer</a><br>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'create_contract' customer.id %}">New Contract</a>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'update_customer' customer.uuid %}">Update Customer</a><br>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'create_contract' customer.uuid %}">New Contract</a>
 
 		</div>
 	</div>
@@ -103,8 +103,8 @@
 					<td>{{active.end_date}}</td>
 					<td>{{active.site_visits}}</td>
 					<td>${{active.price|floatformat:2|intcomma}}</td>
-					<td><a class="btn btn-sm btn-info" href="{% url 'update_contract' active.id %}">Update</td>
-					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' active.id %}">View</td>
+					<td><a class="btn btn-sm btn-info" href="{% url 'update_contract' active.uuid %}">Update</td>
+					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' active.uuid %}">View</td>
 				</tr>	
 				{% endfor %}
 			</table>
@@ -134,12 +134,12 @@
 					<td>{{expired.site_visits}}</td>
 					<td>${{expired.price|floatformat:2|intcomma}}</td>
 					<td>
-						<form method="post" action="{% url 'copy_contract' expired.id %}">
+						<form method="post" action="{% url 'copy_contract' expired.uuid %}">
 							{% csrf_token %}
 							<button type="submit" class="btn btn-sm btn-info">Copy</button>
 						</form>
 					</td>
-					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' expired.id %}">View</td>
+					<td><a class="btn btn-sm btn-primary" href="{% url 'view_contract' expired.uuid %}">View</td>
 				</tr>	
 				{% endfor %}
 			</table>
