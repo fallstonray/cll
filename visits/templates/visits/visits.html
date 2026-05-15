@@ -17,28 +17,17 @@
             </div>
         </div>
         <br>
+        <br>
         <div class="row">
             <div class="col">
                 <div class="card card-body">
                     <form method="get">
-                            {{myFilter.form}}
-                    <button class="btn btn-primary" type="submit">Search</button>
-                  </form>
-                  <script>
-                    (function () {
-                      const input = document.querySelector('form[method="get"] input[type="text"]');
-                      if (!input) return;
-                      let timer;
-                      input.addEventListener('input', function () {
-                        clearTimeout(timer);
-                        timer = setTimeout(function () { input.closest('form').submit(); }, 300);
-                      });
-                    })();
-                  </script>
+                        {{myFilter.form}}
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </form>
                 </div>
             </div>
         </div>
-
         <br>
         <div class="card card-body">
             <table class="table table-sm">

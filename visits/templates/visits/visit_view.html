@@ -38,6 +38,7 @@
 <div class="d-grid gap-2 d-md-block">
 	<a class="btn btn-primary" href="{% url 'update_visit' visit.uuid %}">Update Visit</a>
 	<a class="btn btn-danger" href="{% url 'delete_visit' visit.uuid %}">Delete Visit</a>
+	<a class="btn btn-info" href="{% url 'view_contract' visit.visit_contract.uuid %}">View Contract</a>
 	<a class="btn btn-secondary" href="{% url 'visits' %}">Back to Visits</a>
 </div>
 <br>

@@ -169,16 +169,18 @@
 					<th>Crew Size</th>
 					<th>Man Hours</th>
 					<th>Notes</th>
+					<th>View</th>
 					</tr>
+					{% for visit in visits %}
 					<tr>
-					{% for visit in visits %}	
 					<td>{{contract.site_name}}</td>
-					<td>{{visit.visit_type_name}}</td>	
+					<td>{{visit.visit_type_name}}</td>
 					<td>{{visit.visit_date}}</td>
 					<td>{{visit.crew_leader}}</td>
 					<td>{{visit.crew_size}}</td>
 					<td>{{visit.total_man_hours}}</td>
 					<td>{{visit.notes}}</td>
+					<td><a class="btn btn-info btn-sm" href="{% url 'view_visit' visit.uuid %}">View</a></td>
 					</tr>
 					{% endfor %}
 				</table>	

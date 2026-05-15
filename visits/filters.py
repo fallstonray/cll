@@ -7,4 +7,4 @@ class VisitsFilter(django_filters.FilterSet):
     class Meta:
         model = Visit
         fields = '__all__'
-        exclude = ['notes', 'total_man_hours', 'crew_size']
+        exclude = ['notes', 'total_man_hours', 'crew_size', 'uuid']
