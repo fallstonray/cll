@@ -114,24 +114,15 @@ def customer(request, pk):
     myFilter = ContractFilter(request.GET, queryset=contracts)
     allcontracts = myFilter.qs
 
-    active_contracts = myFilter.qs.filter(
-        # start_date__gte=datetime.now()-timedelta(days=365))
-        end_date__gte=datetime.now())
+    active_contracts = myFilter.qs.filter(is_active=True)
     active_count = active_contracts.count()
-    # print(active_count)
     amounts = active_contracts.aggregate(Sum('price', flat=True))
-    # print(amounts)
     get_total = list(amounts.values())[0]
     if get_total is None:
         get_total = 0
-    # print(type(get_total))
-    # print(get_total)
-    get_total = int(get_total)
-    active_contracts_value = get_total
+    active_contracts_value = int(get_total)
 
-    expired_contracts = myFilter.qs.filter(
-        # start_date__gte=datetime.now()-timedelta(days=365))
-        end_date__lt=datetime.now())
+    expired_contracts = myFilter.qs.filter(is_active=False)
 
     context = {'customer': customer, 'contracts': contracts, 'myFilter': myFilter,
                'active_contracts_value': active_contracts_value,
