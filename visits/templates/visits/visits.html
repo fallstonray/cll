@@ -13,10 +13,7 @@
             <div class="col">
                 <div class="card card-body">
                     <a class="btn btn-primary  btn-block" href="{% url 'create_visit' %}">Add New Visit</a>
-                 
-                  
                 </div>
-                
             </div>
         </div>
         <br>
@@ -26,8 +23,18 @@
                     <form method="get">
                             {{myFilter.form}}
                     <button class="btn btn-primary" type="submit">Search</button>
-    
                   </form>
+                  <script>
+                    (function () {
+                      const input = document.querySelector('form[method="get"] input[type="text"]');
+                      if (!input) return;
+                      let timer;
+                      input.addEventListener('input', function () {
+                        clearTimeout(timer);
+                        timer = setTimeout(function () { input.closest('form').submit(); }, 300);
+                      });
+                    })();
+                  </script>
                 </div>
             </div>
         </div>
@@ -43,10 +50,11 @@
                     <th>Crew Size</th>
                     <th>Total Man Hours</th>
                     <th>Notes</th>
+                    <th>View</th>
+                    <th>Update</th>
+                    <th>Delete</th>
                 </tr>
-        
-                
-                    
+
                     {% for visit in visits reversed %}
                     {% if forloop.counter <= 10 %}
                     <tr>
@@ -57,10 +65,13 @@
                         <td>{{visit.crew_size}}</td>
                         <td>{{visit.total_man_hours}}</td>
                         <td>{{visit.notes|slice:":20"}}</td>
+                        <td><a class="btn btn-info btn-sm btn-block" href="{% url 'view_visit' visit.uuid %}">View</a></td>
+                        <td><a class="btn btn-primary btn-sm btn-block" href="{% url 'update_visit' visit.uuid %}">Update</a></td>
+                        <td><a class="btn btn-danger btn-sm btn-block" href="{% url 'delete_visit' visit.uuid %}">Delete</a></td>
                     </tr>
                     {% endif %}
                     {% endfor %}
-                    
+
             </table>
         </div>
     </div>
@@ -68,6 +79,3 @@
 <p></p>
 
 {% endblock %}
-
-<td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_visit' visits.visit.id %}">View</a></td>
-<td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_visit' visits.visit.id %}">Update</a></td>

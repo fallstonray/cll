@@ -23,9 +23,7 @@ def visits(request):
 @ permission_required("visits.add_visit", login_url="/login", raise_exception=True)
 def createVisit(request):
     form = VisitForm()
-    # form = VisitForm(initial={'visit': visit})
     if request.method == 'POST':
-        # print('Printing POST:', request.POST)
         form = VisitForm(request.POST)
         if form.is_valid():
             form.save()
@@ -33,3 +31,31 @@ def createVisit(request):
 
     context = {'form': form}
     return render(request, 'visits/visit_form.html', context)
+
+
+@ login_required(login_url="/login")
+def viewVisit(request, uuid):
+    visit = Visit.objects.get(uuid=uuid)
+    context = {'visit': visit}
+    return render(request, 'visits/visit_view.html', context)
+
+
+@ login_required(login_url="/login")
+def updateVisit(request, uuid):
+    visit = Visit.objects.get(uuid=uuid)
+    form = VisitForm(instance=visit)
+    if request.method == 'POST':
+        form = VisitForm(request.POST, instance=visit)
+        if form.is_valid():
+            form.save()
+            return redirect('view_visit', uuid)
+    return render(request, 'visits/visit_form.html', {'form': form})
+
+
+@ login_required(login_url="/login")
+def deleteVisit(request, uuid):
+    visit = Visit.objects.get(uuid=uuid)
+    if request.method == 'POST':
+        visit.delete()
+        return redirect('/visits/')
+    return render(request, 'visits/visit_delete.html', {'item': visit})

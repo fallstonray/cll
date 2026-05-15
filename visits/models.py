@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date, datetime
 from django.utils import timezone
+import uuid
 
 
 class VisitType(models.Model):
@@ -21,6 +22,7 @@ class Visit(models.Model):
         'employee.Employee', null=True, on_delete=models.SET_NULL)
     crew_size = models.CharField(max_length=128, blank=False)
     total_man_hours = models.FloatField(blank=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     notes = models.CharField(max_length=1024, null=True, blank=True)
     # created_at = models.DateTimeField(auto_now=True, null=True)
 

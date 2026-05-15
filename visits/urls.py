@@ -6,8 +6,10 @@ from maintenance.models import Contract, Customer
 
 urlpatterns = [
     path('visits/', views.visits, name='visits'),
-    path('create_visit/',
-         views.createVisit, name='create_visit'),
+    path('create_visit/', views.createVisit, name='create_visit'),
+    path('view_visit/<uuid:uuid>/', views.viewVisit, name='view_visit'),
+    path('update_visit/<uuid:uuid>/', views.updateVisit, name='update_visit'),
+    path('delete_visit/<uuid:uuid>/', views.deleteVisit, name='delete_visit'),
 ]
 
 # path('', views.home, name="home"),

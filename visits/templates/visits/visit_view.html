@@ -1,0 +1,44 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% block content %}
+<br>
+<div class="row">
+	<div class="col">
+		<div class="card card-body">
+			<h4>Visit: <strong>{{visit.visit_contract}}</strong> &mdash; {{visit.visit_date}}</h4>
+		</div>
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h4>Visit Details</h4>
+			<hr>
+			<p>
+				<strong>Contract:</strong> {{visit.visit_contract}}<br>
+				<strong>Visit Type:</strong> {{visit.visit_type_name}}<br>
+				<strong>Visit Date:</strong> {{visit.visit_date}}<br>
+				<br>
+				<strong>Crew Leader:</strong> {{visit.crew_leader}}<br>
+				<strong>Crew Size:</strong> {{visit.crew_size}}<br>
+				<strong>Total Man Hours:</strong> {{visit.total_man_hours}}<br>
+			</p>
+		</div>
+	</div>
+	<div class="col-md">
+		<div class="card card-body">
+			<h4>Notes</h4>
+			<hr>
+			<p>{{visit.notes}}</p>
+		</div>
+	</div>
+</div>
+<br>
+<div class="d-grid gap-2 d-md-block">
+	<a class="btn btn-primary" href="{% url 'update_visit' visit.uuid %}">Update Visit</a>
+	<a class="btn btn-danger" href="{% url 'delete_visit' visit.uuid %}">Delete Visit</a>
+	<a class="btn btn-secondary" href="{% url 'visits' %}">Back to Visits</a>
+</div>
+<br>
+{% endblock %}

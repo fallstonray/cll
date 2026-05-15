@@ -1,0 +1,17 @@
+{% extends 'maintenance/main.html' %}
+{% load static %}
+{% block content %}
+<br>
+<div class="row">
+	<div class="col-md-6">
+		<div class="card card-body">
+			<p>Are you sure you want to delete this visit for "{{item.visit_contract}}" on {{item.visit_date}}?</p>
+			<form action="{% url 'delete_visit' item.uuid %}" method="POST">
+				{% csrf_token %}
+				<a class="btn btn-warning" href="{% url 'visits' %}">Cancel</a>
+				<input class="btn btn-danger" type="submit" value="Confirm Delete">
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
