@@ -18,7 +18,7 @@ def employees(request):
 
 
 @ login_required(login_url="/login")
-@ permission_required("visit.add_visit", login_url="/login", raise_exception=True)
+@ permission_required("employee.add_employee", login_url="/login", raise_exception=True)
 def createEmployee(request):
     form = EmployeeForm()
     # form = VisitForm(initial={'visit': visit})

@@ -28,8 +28,8 @@ def sign_up(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-        login(request, user)
-        return redirect('/home')
+            login(request, user)
+            return redirect('/home')
     else:
         form = RegisterForm()
     return render(request, 'registration/sign_up.html', {"form": form})
@@ -74,7 +74,7 @@ def home(request):
 @ login_required(login_url="/login")
 @ permission_required("maintenance.add_customer", login_url="/login", raise_exception=True)
 def createCustomer(request):
-    form = CustomerForm(initial={'customer': customer})
+    form = CustomerForm()
     if request.method == 'POST':
         # print('Printing POST:', request.POST)
         form = CustomerForm(request.POST)
@@ -196,42 +196,22 @@ def createContract(request, pk):
 
 @ login_required(login_url="/login")
 def copyContract(request, pk):
+    if request.method != 'POST':
+        return redirect('view_contract', pk)
+
     original_contract = Contract.objects.get(id=pk)
-    contract_data = model_to_dict(original_contract) #new 2-21-25
+    contract_data = model_to_dict(original_contract)
 
-    # if 'site_customer' in contract_data:
-    #     contract_data['site_customer'] = original_contract.site_customer   
-    # if 'salesrep' in contract_data:
-    #     contract_data['salesrep'] = original_contract.salesrep
-    # if 'mulch_color' in contract_data:
-    #     contract_data['mulch_color'] = original_contract.mulch_color
-
-    for field in Contract._meta.get_fields(): #this for field code replaces all the if statments above
+    for field in Contract._meta.get_fields():
         if isinstance(field, ForeignKey):
             field_name = field.name
             if field_name in contract_data:
                 contract_data[field_name] = getattr(original_contract, field_name)
 
-    contract_data = Contract(**contract_data)  
-    contract = contract_data
+    contract = Contract(**contract_data)
     contract.pk = None
     contract.save()
 
-    # site_name = Contract.objects.filter(id=pk)
-    # form = ContractForm(
-    #     initial={'customer': customer})
-    # form = ContractForm(
-    #     initial={'customer': customer, 'site_name': Contract.site_name, 'contract.price': Contract.price})
-    if request.method == 'POST':
-        # print('Printing POST:', request.POST)
-        form = ContractForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/')
-
-    # context = {'form': form}
-    # return render(request, 'maintenance/contract_form.html', context)
-    # return render(request, 'maintenance/contract_form.html')
     return redirect('update_contract', pk=contract.pk)
 
 
@@ -249,7 +229,6 @@ def viewContract(request, pk):
     visits = Visit.objects.filter(visit_contract=contract)
     for visit in visits:
         visit_man_hours += float(visit.total_man_hours)
-    print(visit_man_hours)
     # th = float(0)
     # th = sum(float(visit.total_man_hours))       
     # print(type(th))

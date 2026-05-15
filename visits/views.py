@@ -20,7 +20,7 @@ def visits(request):
 
 
 @ login_required(login_url="/login")
-@ permission_required("visit.add_visit", login_url="/login", raise_exception=True)
+@ permission_required("visits.add_visit", login_url="/login", raise_exception=True)
 def createVisit(request):
     form = VisitForm()
     # form = VisitForm(initial={'visit': visit})
