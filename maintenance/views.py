@@ -214,7 +214,7 @@ def viewContract(request, uuid):
     # print(type(payments))
     payment_amount = price / payments
     visit_man_hours = float(0)
-    visits = Visit.objects.filter(visit_contract=contract)
+    visits = Visit.objects.filter(visit_contract=contract).order_by('visit_date')
     for visit in visits:
         visit_man_hours += float(visit.total_man_hours)
     # th = float(0)
