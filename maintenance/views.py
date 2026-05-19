@@ -114,7 +114,7 @@ def customer(request, uuid):
     myFilter = ContractFilter(request.GET, queryset=contracts)
     allcontracts = myFilter.qs
 
-    active_contracts = myFilter.qs.filter(is_active=True)
+    active_contracts = myFilter.qs.filter(is_active=True).order_by('site_name')
     active_count = active_contracts.count()
     amounts = active_contracts.aggregate(Sum('price', flat=True))
     get_total = list(amounts.values())[0]
