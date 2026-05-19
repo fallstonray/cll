@@ -9,7 +9,7 @@ from .filters import VisitsFilter
 
 @ login_required(login_url="/login")
 def visits(request):
-    visits = Visit.objects.all()
+    visits = Visit.objects.order_by('-id')
     visits_count = visits.count()
     myFilter = VisitsFilter(request.GET, queryset=visits)
     visits = myFilter.qs

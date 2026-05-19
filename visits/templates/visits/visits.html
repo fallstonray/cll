@@ -29,6 +29,7 @@
             </div>
         </div>
         <br>
+        <h6><strong>10 Most Recent Visits</strong></h6>
         <div class="card card-body">
             <table class="table table-sm">
                 <tr>
@@ -44,7 +45,7 @@
                     <th>Delete</th>
                 </tr>
 
-                    {% for visit in visits reversed %}
+                    {% for visit in visits %}
                     {% if forloop.counter <= 10 %}
                     <tr>
                         <td>{{visit.visit_contract}}</td>
