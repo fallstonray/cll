@@ -28,7 +28,12 @@
       </ul>
       <span class="navbar-text">
       {% if user.is_authenticated %}
-      <span class="hello-msg">Logged in as {{user.username}} | <a href="/logout">Logout</a></span>
+      <span class="hello-msg">Logged in as {{user.username}} |
+        <form method="post" action="/logout/" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-link p-0 align-baseline" style="color:inherit;">Logout</button>
+        </form>
+      </span>
       {% else %}
         <a href="/login">Login</a>
       {% endif%}
