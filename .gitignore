@@ -1,6 +1,6 @@
 # Local environment / secrets
 .env
-
+CLAUDE.md
 db.sqlite3
 *.sqlite3
 *.json
