@@ -13,7 +13,7 @@
 		<h5>NEWEST 5 CUSTOMERS:</h5>
 		<hr>
 		<div class="card card-body">
-		
+			<div class="table-responsive">
 			<table class="table table-sm">
 				<tr>
 					<th>Customer Name</th>
@@ -22,13 +22,14 @@
 				</tr>
                 {% for customer in customers reversed %}
 				{% if forloop.counter <= 5 %}
-                <tr>    
+                <tr>
                     <td>{{customer.name}}</td>
                     <td>{{customer.phone1}}</td>
 					<td><a class="btn btn-sm btn-info" href="{% url 'customer' customer.uuid %}">View</a></td>                </tr>
 				{% endif %}
                 {% endfor %}
 			</table>
+			</div>
 		</div>
 	</div>
 
@@ -36,7 +37,7 @@
 		<h5>NEWEST 5 CONTRACTS</h5>
 		<hr>
 		<div class="card card-body">
-			
+			<div class="table-responsive">
 			<table class="table table-sm">
 				<tr>
 					<th>Site Name</th>
@@ -62,6 +63,7 @@
                 {% endfor %}
 
 			</table>
+			</div>
 		</div>
 	</div>
 
@@ -73,6 +75,7 @@
 			<hr>
 		<div class="col">
 			<div class="card card-body">
+				<div class="table-responsive">
 				<table class="table table-sm">
 					<tr>
 						<th>Customer Name</th>
@@ -81,14 +84,15 @@
 						<th>View</th>
 					</tr>
 					{% for list in expire_list %}
-					<tr>    
+					<tr>
 						<td>{{list.site_customer}}</td>
 						<td>{{list.site_name}}</td>
 						<td>{{list.end_date|date:"F j, Y"}}</td>
-						<td><a class="btn btn-sm btn-info" href="{% url 'view_contract' list.uuid %}">View</a></td>          
-					    </tr>
+						<td><a class="btn btn-sm btn-info" href="{% url 'view_contract' list.uuid %}">View</a></td>
+					</tr>
 					{% endfor %}
 				</table>
+				</div>
 				
 				<br>
 			</div>

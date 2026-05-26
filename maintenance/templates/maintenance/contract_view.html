@@ -154,6 +154,7 @@
 			<hr>
 			{{site_visits}}<br>  
 			<div class="card card-body">
+				<div class="table-responsive">
 				<table class="table table-lg">
 					<tr>
 					<th>Site Name</th>
@@ -177,7 +178,8 @@
 					<td><a class="btn btn-info btn-sm" href="{% url 'view_visit' visit.uuid %}">View</a></td>
 					</tr>
 					{% endfor %}
-				</table>	
+				</table>
+				</div>
 			</div>
 		</div>
 	</div>

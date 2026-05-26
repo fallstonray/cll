@@ -3,10 +3,9 @@
 {% block content %}
 
 <h1>{% if show_inactive %}Inactive Employees{% else %}Employee Center{% endif %}</h1>
-<body>
     <div class="row">
         <div class="col-md">
-        <h7>{% if show_inactive %}INACTIVE{% else %}ACTIVE{% endif %} EMPLOYEES: <strong>{{employees_count}}</strong></h7>
+        <h6>{% if show_inactive %}INACTIVE{% else %}ACTIVE{% endif %} EMPLOYEES: <strong>{{employees_count}}</strong></h6>
         <hr>
 
         <div class="row">
@@ -23,6 +22,7 @@
         </div>
         <br>
         <div class="card card-body">
+            <div class="table-responsive">
             <table class="table table-sm">
                 <tr>
                     <th>First Name</th>
@@ -46,11 +46,11 @@
                         <td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_employee' employee.uuid %}">View</a></td>
                     </tr>
                     {% endfor %}
-                    
+
             </table>
+            </div>
         </div>
     </div>
-</body>
 <p></p>
 
 {% endblock %}

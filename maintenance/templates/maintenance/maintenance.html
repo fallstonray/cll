@@ -3,11 +3,10 @@
 {% block content %}
 
 <h1>Active Maintenance Contracts</h1>
-<body>
 <div class="row">
     <div class="col-md">
-    <h7>TOTAL ACTIVE CONTRACTS IN SYSTEM: <strong>{{total_active_contracts}}</strong></h7><br>
-    <h7>TOTAL CONTRACTS IN SYSTEM: <strong>{{contracts_count}}</strong></h7>
+    <h6>TOTAL ACTIVE CONTRACTS IN SYSTEM: <strong>{{total_active_contracts}}</strong></h6>
+    <h6>TOTAL CONTRACTS IN SYSTEM: <strong>{{contracts_count}}</strong></h6>
     <hr>
     <div class="row">
         <div class="col">
@@ -32,6 +31,7 @@
     </div>
     <br>
     <div class="card card-body">
+        <div class="table-responsive">
         <table class="table table-sm">
             <tr>
                 <th>Customer</th>
@@ -62,11 +62,10 @@
                     <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.uuid %}">Update</a></td>
                 </tr>
                 {% endfor %}
-                
+
         </table>
+        </div>
     </div>
 </div>
-           
-</body>
 {% endblock %}
 

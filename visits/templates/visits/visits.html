@@ -3,10 +3,9 @@
 {% block content %}
 
 <h1>Visit Center</h1>
-<body>
     <div class="row">
         <div class="col-md">
-        <h7>TOTAL VISITS IN SYSTEM: <strong>{{visits_count}}</strong></h7>
+        <h6>TOTAL VISITS IN SYSTEM: <strong>{{visits_count}}</strong></h6>
         <hr>
 
         <div class="row">
@@ -31,6 +30,7 @@
         <br>
         <h6><strong>10 Most Recent Visits</strong></h6>
         <div class="card card-body">
+            <div class="table-responsive">
             <table class="table table-sm">
                 <tr>
                     <th>Site Name</th>
@@ -63,9 +63,9 @@
                     {% endfor %}
 
             </table>
+            </div>
         </div>
     </div>
-</body>
 <p></p>
 
 {% endblock %}
