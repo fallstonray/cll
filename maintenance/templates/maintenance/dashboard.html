@@ -51,7 +51,7 @@
 				{% if forloop.counter <= 5 %}
                     <tr>
                         <td>{{contract.site_name}}</td>
-                        <td>{{contract.start_date}}</td>
+                        <td>{{contract.start_date|date:"F j, Y"}}</td>
                         <td>{{contract.site_visits}}</td>
                         <td>${{contract.price|floatformat:2|intcomma}}</td>
 						<td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_contract' contract.uuid %}">View</a></td>
@@ -84,7 +84,7 @@
 					<tr>    
 						<td>{{list.site_customer}}</td>
 						<td>{{list.site_name}}</td>
-						<td>{{list.end_date}}</td>
+						<td>{{list.end_date|date:"F j, Y"}}</td>
 						<td><a class="btn btn-sm btn-info" href="{% url 'view_contract' list.uuid %}">View</a></td>          
 					    </tr>
 					{% endfor %}

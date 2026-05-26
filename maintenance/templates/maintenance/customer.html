@@ -99,8 +99,8 @@
 				{% for active in active_contracts %}
 				<tr>
 					<td>{{active.site_name}}</td>
-					<td>{{active.start_date}}</td>
-					<td>{{active.end_date}}</td>
+					<td>{{active.start_date|date:"F j, Y"}}</td>
+					<td>{{active.end_date|date:"F j, Y"}}</td>
 					<td>{{active.site_visits}}</td>
 					<td>${{active.price|floatformat:2|intcomma}}</td>
 					<td><a class="btn btn-sm btn-info" href="{% url 'update_contract' active.uuid %}">Update</td>
@@ -129,8 +129,8 @@
 				{% for expired in expired_contracts %}
 				<tr>
 					<td>{{expired.site_name}}</td>
-					<td>{{expired.start_date}}</td>
-					<td>{{expired.end_date}}</td>
+					<td>{{expired.start_date|date:"F j, Y"}}</td>
+					<td>{{expired.end_date|date:"F j, Y"}}</td>
 					<td>{{expired.site_visits}}</td>
 					<td>${{expired.price|floatformat:2|intcomma}}</td>
 					<td>

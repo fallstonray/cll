@@ -23,8 +23,8 @@
 			<p><strong>Description:</strong> {{contract.contract_description}}<br>
 				<strong>Location:</strong> {{contract.location}}<br>
 				<br>
-				<strong>Start Date:</strong> {{contract.start_date}}<br>
-				<strong>End Date:</strong> {{contract.end_date}}<br>
+				<strong>Start Date:</strong> {{contract.start_date|date:"F j, Y"}}<br>
+				<strong>End Date:</strong> {{contract.end_date|date:"F j, Y"}}<br>
 				<br>
 				<strong>Price: $</strong> {{contract.price|floatformat:2|intcomma}}<br>
 				<strong>Payments:</strong> {{contract.payments}} <br>
@@ -32,7 +32,8 @@
 				<br>
 				<strong>Sales Rep:</strong> {{contract.salesrep}}<br>
 				<strong>Customer Contact:</strong> {{contract.customer.contact_name}}<br>
-				<strong>Customer Phone:</strong> {{contract.customer.phone1}}
+				<strong>Customer Phone:</strong> {{contract.customer.phone1}}<br>
+				<br>
 
 			</p>
 		</div>
@@ -63,7 +64,6 @@
 					No
 					{% endif %}<br>
 			</p>
-			<br>
 			<h4>Mulch Details</h4>
 			<hr>
 			<p>
@@ -75,16 +75,10 @@
 				Yes 
 				{% else %}
 				No
-				{% endif %}<br>
-				
-				<br>
-		
-				<br>
+				{% endif %}
 				{% if customer.billing_add2 %}
 				<strong></strong>Address: {{customer.billing_add2}}<br>
 				{% endif %}
-				
-				<strong></strong><br>
 			</p>
 		</div>
 	</div>
@@ -175,7 +169,7 @@
 					<tr>
 					<td>{{contract.site_name}}</td>
 					<td>{{visit.visit_type_name}}</td>
-					<td>{{visit.visit_date}}</td>
+					<td>{{visit.visit_date|date:"F j, Y"}}</td>
 					<td>{{visit.crew_leader}}</td>
 					<td>{{visit.crew_size}}</td>
 					<td>{{visit.total_man_hours}}</td>

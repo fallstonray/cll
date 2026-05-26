@@ -24,7 +24,7 @@ class Visit(models.Model):
     total_man_hours = models.FloatField(blank=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     notes = models.CharField(max_length=1024, null=True, blank=True)
-    # created_at = models.DateTimeField(auto_now=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return str(self.visit_contract)
