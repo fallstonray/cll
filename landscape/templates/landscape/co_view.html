@@ -1,0 +1,71 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% block content %}
+<br>
+<div class="row">
+    <div class="col">
+        <div class="card card-body" id="total-orders">
+            <h3 class="text-center text-white"><strong>{{co.name}}</strong></h3>
+            <h5 class="text-center text-white">
+                {{co.bid.project_name}} &nbsp;
+                {% if co.status == 'approved' %}<span class="badge bg-success">Approved</span>
+                {% elif co.status == 'rejected' %}<span class="badge bg-danger">Rejected</span>
+                {% else %}<span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}
+            </h5>
+        </div>
+    </div>
+</div>
+<br>
+
+<div class="row">
+    <div class="col-md">
+        <div class="card card-body">
+            <h4>Change Order Details</h4>
+            <hr>
+            <p>
+                {% if co.status == 'approved' and co.co_number %}
+                <strong>CO Number:</strong> {{co.co_number}}<br>
+                {% endif %}
+                <strong>Project:</strong> <a href="{% url 'view_bid' co.bid.uuid %}">{{co.bid.project_name}}</a><br>
+                <strong>Customer / GC:</strong> {{co.bid.customer|default:"—"}}<br>
+                <strong>Status:</strong>
+                {% if co.status == 'approved' %}<span class="badge bg-success">Approved</span>
+                {% elif co.status == 'rejected' %}<span class="badge bg-danger">Rejected</span>
+                {% else %}<span class="badge bg-warning text-dark">Pending</span>
+                {% endif %}<br>
+                {% if request.user.is_superuser %}
+                <strong>Amount:</strong> ${{co.amount|floatformat:2|intcomma}}<br>
+                {% endif %}
+                <strong>Date Submitted:</strong> {{co.date_submitted|date:"F j, Y"|default:"—"}}<br>
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md">
+        <div class="card card-body">
+            <h4>Scope of Work</h4>
+            <hr>
+            <p>{{co.scope_of_work|default:"—"|linebreaksbr}}</p>
+        </div>
+    </div>
+
+    <div class="col-md">
+        <div class="card card-body">
+            <h4>Notes</h4>
+            <hr>
+            <p>{{co.notes|default:"—"|linebreaksbr}}</p>
+        </div>
+    </div>
+</div>
+<br>
+
+<div class="d-grid gap-2 d-md-block">
+    <a class="btn btn-primary" href="{% url 'update_co' co.uuid %}">Edit Change Order</a>
+    {% if perms.landscape.delete_changeorder %}
+    <a class="btn btn-danger" href="{% url 'delete_co' co.uuid %}">Delete</a>
+    {% endif %}
+    <a class="btn btn-secondary" href="{% url 'view_bid' co.bid.uuid %}">Back to Bid</a>
+</div>
+<br>
+{% endblock %}

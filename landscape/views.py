@@ -46,8 +46,8 @@ COMPLETED_SORT_FIELDS = {
 @login_required(login_url="/login")
 @permission_required('landscape.view_bid', raise_exception=True)
 def bidPipeline(request):
-    """Active bid pipeline — all phases except Awarded."""
-    bids = Bid.objects.exclude(phase='awarded')
+    """Active bid pipeline — estimating/submitted/on_hold/lost/dead only."""
+    bids = Bid.objects.exclude(phase__in=['awarded', 'likely'])
     myFilter = BidFilter(request.GET, queryset=bids)
 
     sort  = request.GET.get('sort', 'project_name')
@@ -95,7 +95,7 @@ def activeProjects(request):
     sort  = request.GET.get('sort', 'project_name')
     order = request.GET.get('order', 'asc')
     field = ACTIVE_SORT_FIELDS.get(sort, 'project_name')
-    projects = Bid.objects.filter(phase='awarded').exclude(status='completed').order_by(
+    projects = Bid.objects.filter(phase__in=['awarded', 'likely']).exclude(status='completed').order_by(
         f'-{field}' if order == 'desc' else field
     )
     if request.GET.get('export') == 'csv':
@@ -210,7 +210,17 @@ def createBid(request):
 @permission_required('landscape.view_bid', raise_exception=True)
 def viewBid(request, uuid):
     bid = Bid.objects.get(uuid=uuid)
-    change_orders = bid.changeorder_set.all().order_by('date_submitted')
+    from django.db.models import Case, When, Value, IntegerField
+    change_orders = bid.changeorder_set.all().order_by(
+        Case(
+            When(status='approved', then=Value(0)),
+            When(status='pending',  then=Value(1)),
+            When(status='rejected', then=Value(2)),
+            default=Value(3),
+            output_field=IntegerField(),
+        ),
+        'date_submitted',
+    )
     log_entries = bid.dailylogentry_set.all()  # ordered by Meta: -date, -created_at
     log_form = DailyLogEntryForm()
     context = {
@@ -246,6 +256,13 @@ def deleteBid(request, uuid):
 
 
 # ── Change Order CRUD ─────────────────────────────────────────────────────────
+
+@login_required(login_url="/login")
+@permission_required('landscape.view_bid', raise_exception=True)
+def viewChangeOrder(request, uuid):
+    co = ChangeOrder.objects.get(uuid=uuid)
+    return render(request, 'landscape/co_view.html', {'co': co})
+
 
 @login_required(login_url="/login")
 @permission_required('landscape.add_changeorder', raise_exception=True)

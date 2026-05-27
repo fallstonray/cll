@@ -15,6 +15,7 @@ urlpatterns = [
 
     # Change Order CRUD
     path('landscape/bid/<uuid:uuid>/add_co/',  views.addChangeOrder,    name='add_co'),
+    path('landscape/co/<uuid:uuid>/',          views.viewChangeOrder,   name='view_co'),
     path('landscape/co/<uuid:uuid>/update/',   views.updateChangeOrder, name='update_co'),
     path('landscape/co/<uuid:uuid>/delete/',   views.deleteChangeOrder, name='delete_co'),
 

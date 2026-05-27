@@ -58,8 +58,7 @@ class BidUpdateForm(ModelForm):
 class ChangeOrderForm(ModelForm):
     class Meta:
         model = ChangeOrder
-        fields = '__all__'
-        exclude = ['uuid', 'created_at', 'bid']
+        fields = ['co_number', 'name', 'amount', 'status', 'date_submitted', 'scope_of_work', 'notes']
         widgets = {
             'date_submitted': DateInput(attrs={'type': 'date'}),
         }

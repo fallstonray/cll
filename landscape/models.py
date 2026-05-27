@@ -47,7 +47,7 @@ class Bid(models.Model):
     start_date      = models.DateField(null=True, blank=True)
     end_date        = models.DateField(null=True, blank=True)
     contract_signed = models.BooleanField(default=False)
-    warranty_days   = models.IntegerField(null=True, blank=True, help_text="Warranty period in days")
+    warranty_days   = models.IntegerField(default=365, blank=True, help_text="Warranty period in days")
     notes           = models.TextField(null=True, blank=True)
     uuid            = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at      = models.DateTimeField(auto_now_add=True)
@@ -60,7 +60,7 @@ class Bid(models.Model):
 
     @property
     def is_project(self):
-        return self.phase == 'awarded'
+        return self.phase in ('awarded', 'likely')
 
     @property
     def approved_co_total(self):
@@ -82,6 +82,7 @@ class Bid(models.Model):
 
 class ChangeOrder(models.Model):
     bid            = models.ForeignKey(Bid, on_delete=models.CASCADE)
+    co_number      = models.CharField(max_length=50, null=True, blank=True, verbose_name='CO Number', help_text='Assigned only when status is Approved')
     name           = models.CharField(max_length=255)
     amount         = models.FloatField()
     status         = models.CharField(max_length=20, choices=CO_STATUS_CHOICES, default='pending')
