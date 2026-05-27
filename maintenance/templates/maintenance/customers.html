@@ -52,7 +52,7 @@
             
                 {% for customer in customers %}
                 <tr>
-                    <td>{{customer.name}}</td>
+                    <td>{{customer.name}} {% if customer.is_general_contractor %}<span class="badge bg-warning text-dark">GC</span>{% endif %}</td>
                     <td>{{customer.city}}</td>
                     <td>{{customer.state}}</td>
                     <td>{{customer.contact_name}}</td>

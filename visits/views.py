@@ -8,6 +8,7 @@ from .filters import VisitsFilter
 
 
 @ login_required(login_url="/login")
+@ permission_required("visits.view_visit", raise_exception=True)
 def visits(request):
     visits = Visit.objects.order_by('-id')
     visits_count = visits.count()
@@ -34,6 +35,7 @@ def createVisit(request):
 
 
 @ login_required(login_url="/login")
+@ permission_required("visits.view_visit", raise_exception=True)
 def viewVisit(request, uuid):
     visit = Visit.objects.get(uuid=uuid)
     context = {'visit': visit}
@@ -41,6 +43,7 @@ def viewVisit(request, uuid):
 
 
 @ login_required(login_url="/login")
+@ permission_required("visits.change_visit", raise_exception=True)
 def updateVisit(request, uuid):
     visit = Visit.objects.get(uuid=uuid)
     form = VisitForm(instance=visit)
@@ -53,6 +56,7 @@ def updateVisit(request, uuid):
 
 
 @ login_required(login_url="/login")
+@ permission_required("visits.delete_visit", raise_exception=True)
 def deleteVisit(request, uuid):
     visit = Visit.objects.get(uuid=uuid)
     if request.method == 'POST':

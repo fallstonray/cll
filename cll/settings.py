@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'visits',
     'employee',
     'axes',
+    'landscape',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

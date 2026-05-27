@@ -1,0 +1,22 @@
+{% extends 'maintenance/main.html' %}
+{% load crispy_forms_filters %}
+{% block content %}
+<br>
+<h1>{{action}}</h1>
+<hr>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-body">
+            <form method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <div class="d-flex gap-2 mt-3">
+                    <input class="btn btn-primary" type="submit" value="Save">
+                    <a class="btn btn-secondary" href="{% url 'bid_pipeline' %}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+{% endblock %}

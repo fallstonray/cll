@@ -26,9 +26,11 @@
 				<strong>Start Date:</strong> {{contract.start_date|date:"F j, Y"}}<br>
 				<strong>End Date:</strong> {{contract.end_date|date:"F j, Y"}}<br>
 				<br>
+				{% if request.user.is_superuser %}
 				<strong>Price: $</strong> {{contract.price|floatformat:2|intcomma}}<br>
 				<strong>Payments:</strong> {{contract.payments}} <br>
 				<strong>Payment Amount: $</strong> {{payment_amount|floatformat:2|intcomma}} <br>
+				{% endif %}
 				<br>
 				<strong>Sales Rep:</strong> {{contract.salesrep}}<br>
 				<strong>Customer Contact:</strong> {{contract.customer.contact_name}}<br>

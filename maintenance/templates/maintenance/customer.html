@@ -7,7 +7,7 @@
 <div class="row">
 	<div class="col-md">
 		<div class="card card-body">
-			<h5>Customer: {{customer.name}}</h5>
+			<h5>Customer: {{customer.name}} {% if customer.is_general_contractor %}<span class="badge bg-warning text-dark">General Contractor</span>{% endif %}</h5>
 			<hr>
 			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'update_customer' customer.uuid %}">Update Customer</a><br>
 			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'create_contract' customer.uuid %}">New Contract</a>
@@ -52,9 +52,11 @@
 			<h5>Active Contracts</h5>
 			<hr>
 			<h2 style="text-align: center;padding: 1px">{{active_count}}</h2>
+			{% if request.user.is_superuser %}
 			<hr>
 			<h5>Active Contracts Value</h5>
 			<h2 style="text-align: center;padding: 1px">${{active_contracts_value|floatformat:2|intcomma}}</h2>
+			{% endif %}
 		</div>
 	</div>
 <p></p>
@@ -82,6 +84,91 @@
 </div>
 <br>
 <div><br></div>
+
+{% if current_work %}
+<h4>Current Landscape Work</h4>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<div class="table-responsive">
+			<table class="table table-sm">
+				<tr>
+					<th>Project Name</th>
+					<th>Phase</th>
+					<th>Amount</th>
+					<th>Start Date</th>
+					<th>Status</th>
+					<th>View</th>
+				</tr>
+				{% for bid in current_work %}
+				<tr>
+					<td>{{bid.project_name}}</td>
+					<td>
+						{% if bid.phase == 'awarded' %}
+							<span class="badge bg-success">Awarded</span>
+						{% elif bid.phase == 'likely' %}
+							<span class="badge bg-info text-dark">Likely</span>
+						{% endif %}
+					</td>
+					<td>{% if bid.amount %}${{bid.amount|floatformat:2}}{% else %}—{% endif %}</td>
+					<td>{% if bid.start_date %}{{bid.start_date|date:"F j, Y"}}{% else %}—{% endif %}</td>
+					<td>{% if bid.status %}{{bid.get_status_display}}{% else %}—{% endif %}</td>
+					<td><a class="btn btn-sm btn-primary" href="{% url 'view_bid' bid.uuid %}">View</a></td>
+				</tr>
+				{% endfor %}
+			</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div><br></div>
+{% endif %}
+
+{% if bid_history %}
+<h4>Bid History</h4>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<div class="table-responsive">
+			<table class="table table-sm">
+				<tr>
+					<th>Project Name</th>
+					<th>Phase</th>
+					<th>Amount</th>
+					<th>Bid Submitted</th>
+					<th>Estimator</th>
+					<th>View</th>
+				</tr>
+				{% for bid in bid_history %}
+				<tr>
+					<td>{{bid.project_name}}</td>
+					<td>
+						{% if bid.phase == 'estimating' %}
+							<span class="badge bg-secondary">Estimating</span>
+						{% elif bid.phase == 'submitted' %}
+							<span class="badge bg-primary">Submitted</span>
+						{% elif bid.phase == 'on_hold' %}
+							<span class="badge bg-warning text-dark">On Hold</span>
+						{% elif bid.phase == 'lost' %}
+							<span class="badge bg-danger">Lost</span>
+						{% elif bid.phase == 'dead' %}
+							<span class="badge bg-dark">Dead</span>
+						{% endif %}
+					</td>
+					<td>{% if bid.amount %}${{bid.amount|floatformat:2}}{% else %}—{% endif %}</td>
+					<td>{% if bid.bid_submitted %}{{bid.bid_submitted|date:"F j, Y"}}{% else %}—{% endif %}</td>
+					<td>{% if bid.estimator %}{{bid.estimator}}{% else %}—{% endif %}</td>
+					<td><a class="btn btn-sm btn-primary" href="{% url 'view_bid' bid.uuid %}">View</a></td>
+				</tr>
+				{% endfor %}
+			</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div><br></div>
+{% endif %}
+
 <h4>Active Contracts</h4>
 <div class="row">
 	<div class="col-md">

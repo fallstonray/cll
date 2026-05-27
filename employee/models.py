@@ -22,6 +22,11 @@ class Employee(models.Model):
     license = models.CharField(max_length=120, unique=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     is_active = models.BooleanField(default=True)
+    is_office_staff = models.BooleanField(default=False, help_text="Can be assigned as an estimator on landscape bids")
+    user = models.OneToOneField(
+        'auth.User', null=True, blank=True, on_delete=models.SET_NULL,
+        help_text="Link to this employee's login account"
+    )
 
     def __str__(self):
         return '%s %s' % (self.first_name, self.last_name)

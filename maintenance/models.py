@@ -25,6 +25,7 @@ class Customer(models.Model):
     billing_state = models.CharField(max_length=2, blank=True, null=True)
     billing_zip = models.CharField(max_length=5, blank=True, null=True)
     billing_ref = models.CharField(max_length=128, blank=True, null=True)
+    is_general_contractor = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

@@ -1,0 +1,70 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% load landscape_tags %}
+{% block content %}
+
+<h1>Bid Pipeline</h1>
+<div class="row">
+    <div class="col-md">
+        <h6>TOTAL BIDS: <strong>{{bids_count}}</strong></h6>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <div class="card card-body">
+                    <form method="get">
+                        {{myFilter.form}}
+                        <div class="d-flex gap-2 flex-wrap mt-2">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                            <a class="btn btn-success" href="{% url 'create_bid' %}">+ New Bid</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="card card-body">
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th><a href="{% sort_url 'project_name' %}" class="text-decoration-none link-light">Project Name {% if sort == 'project_name' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th><a href="{% sort_url 'customer' %}" class="text-decoration-none link-light">Customer / GC {% if sort == 'customer' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th><a href="{% sort_url 'city' %}" class="text-decoration-none link-light">City {% if sort == 'city' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th><a href="{% sort_url 'state' %}" class="text-decoration-none link-light">State {% if sort == 'state' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            {% if request.user.is_superuser %}<th><a href="{% sort_url 'amount' %}" class="text-decoration-none link-light">Amount {% if sort == 'amount' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>{% endif %}
+                            <th><a href="{% sort_url 'phase' %}" class="text-decoration-none link-light">Phase {% if sort == 'phase' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th><a href="{% sort_url 'estimator' %}" class="text-decoration-none link-light">Estimator {% if sort == 'estimator' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th><a href="{% sort_url 'bid_submitted' %}" class="text-decoration-none link-light">Bid Submitted {% if sort == 'bid_submitted' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bid in bids %}
+                        <tr>
+                            <td><a href="{% url 'view_bid' bid.uuid %}" class="text-decoration-none fw-semibold">{{bid.project_name}}</a></td>
+                            <td>{% if bid.customer %}<a href="{% url 'customer' bid.customer.uuid %}" class="text-decoration-none text-secondary">{{bid.customer}}</a>{% else %}—{% endif %}</td>
+                            <td>{{bid.city|default:"—"}}</td>
+                            <td>{{bid.state|default:"—"}}</td>
+                            {% if request.user.is_superuser %}<td>{% if bid.amount %}${{bid.amount|floatformat:2|intcomma}}{% else %}—{% endif %}</td>{% endif %}
+                            <td>
+                                {% if bid.phase == 'estimating' %}<span class="badge bg-secondary">Estimating</span>
+                                {% elif bid.phase == 'submitted' %}<span class="badge bg-primary">Submitted</span>
+                                {% elif bid.phase == 'on_hold' %}<span class="badge bg-warning text-dark">On Hold</span>
+                                {% elif bid.phase == 'likely' %}<span class="badge bg-info text-dark">Likely</span>
+                                {% elif bid.phase == 'lost' %}<span class="badge bg-danger">Lost</span>
+                                {% elif bid.phase == 'dead' %}<span class="badge bg-dark">Dead</span>
+                                {% endif %}
+                            </td>
+                            <td>{{bid.estimator}}</td>
+                            <td>{{bid.bid_submitted|date:"F j, Y"|default:"—"}}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="10" class="text-center text-muted">No bids found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+{% endblock %}

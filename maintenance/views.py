@@ -8,6 +8,7 @@ from django.forms import inlineformset_factory
 from django.db.models import Sum, Count, F, ExpressionWrapper, FloatField
 from .models import *
 from visits.models import Visit, VisitType
+from landscape.models import Bid
 from .forms import ContractForm, CustomerForm, RegisterForm
 from .filters import ContractFilter, CustomerFilter
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -90,6 +91,7 @@ def createCustomer(request):
 
 
 @ login_required(login_url="/login")
+@ permission_required("maintenance.view_customer", raise_exception=True)
 def customers(request):
     customers = Customer.objects.all()
     customers_count = customers.count()
@@ -104,6 +106,7 @@ def customers(request):
 
 
 @ login_required(login_url="/login")
+@ permission_required("maintenance.view_customer", raise_exception=True)
 def customer(request, uuid):
     customer = Customer.objects.get(uuid=uuid)
     contracts = customer.contract_set.all()
@@ -124,15 +127,28 @@ def customer(request, uuid):
 
     expired_contracts = myFilter.qs.filter(is_active=False)
 
+    current_work = Bid.objects.filter(
+        customer=customer,
+        phase__in=['awarded', 'likely']
+    ).order_by('project_name')
+
+    bid_history = Bid.objects.filter(
+        customer=customer,
+        phase__in=['estimating', 'submitted', 'on_hold', 'lost', 'dead']
+    ).order_by('-created_at')
+
     context = {'customer': customer, 'contracts': contracts, 'myFilter': myFilter,
                'active_contracts_value': active_contracts_value,
                'active_contracts': active_contracts,
-               'expired_contracts': expired_contracts, 'active_count': active_count}
+               'expired_contracts': expired_contracts, 'active_count': active_count,
+               'current_work': current_work,
+               'bid_history': bid_history}
     return render(request, 'maintenance/customer.html', context)
 
 
 # below is the view for updating a customer
 @ login_required(login_url="/login")
+@ permission_required("maintenance.change_customer", raise_exception=True)
 def updateCustomer(request, uuid):
     customer = Customer.objects.get(uuid=uuid)
     form = CustomerForm(instance=customer)
@@ -149,6 +165,7 @@ def updateCustomer(request, uuid):
 
 
 @ login_required(login_url="/login")
+@ permission_required("maintenance.view_contract", raise_exception=True)
 def maintenance(request):
     all_contracts = Contract.objects.all()
     contracts_count = all_contracts.count()
@@ -170,6 +187,7 @@ def maintenance(request):
 
 
 @ login_required(login_url="/login")
+@ permission_required("maintenance.add_contract", raise_exception=True)
 def createContract(request, uuid):
     customer = Customer.objects.get(uuid=uuid)
     form = ContractForm(initial={'customer': customer})
@@ -183,6 +201,7 @@ def createContract(request, uuid):
 
 
 @ login_required(login_url="/login")
+@ permission_required("maintenance.add_contract", raise_exception=True)
 def copyContract(request, uuid):
     if request.method != 'POST':
         return redirect('view_contract', uuid)
@@ -207,6 +226,7 @@ def copyContract(request, uuid):
 # below was copied from def customer and modified
 
 @ login_required(login_url="/login")
+@ permission_required("maintenance.view_contract", raise_exception=True)
 def viewContract(request, uuid):
     contract = Contract.objects.get(uuid=uuid)
     price = float(contract.price)
@@ -227,6 +247,7 @@ def viewContract(request, uuid):
 
 
 @ login_required(login_url="/login")
+@ permission_required("maintenance.change_contract", raise_exception=True)
 def updateContract(request, uuid):
     contract = Contract.objects.get(uuid=uuid)
     form = ContractForm(instance=contract)
@@ -241,6 +262,7 @@ def updateContract(request, uuid):
 
 
 @ login_required(login_url="/login")
+@ permission_required("maintenance.delete_contract", raise_exception=True)
 def deleteContract(request, uuid):
     contract = Contract.objects.get(uuid=uuid)
     if request.method == 'POST':
