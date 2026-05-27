@@ -1,4 +1,6 @@
+import csv
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from datetime import date, timedelta
 from .models import Bid, ChangeOrder, DailyLogEntry
@@ -53,6 +55,29 @@ def bidPipeline(request):
     field = PIPELINE_SORT_FIELDS.get(sort, 'project_name')
     bids  = myFilter.qs.order_by(f'-{field}' if order == 'desc' else field)
 
+    if request.GET.get('export') == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="bid_pipeline.csv"'
+        writer = csv.writer(response)
+        headers = ['Project Name', 'Customer / GC', 'City', 'State', 'Phase', 'Estimator', 'Bid Submitted']
+        if request.user.is_superuser:
+            headers.append('Amount')
+        writer.writerow(headers)
+        for bid in bids:
+            row = [
+                bid.project_name,
+                str(bid.customer) if bid.customer else '',
+                bid.city or '',
+                bid.state or '',
+                bid.get_phase_display(),
+                str(bid.estimator) if bid.estimator else '',
+                bid.bid_submitted or '',
+            ]
+            if request.user.is_superuser:
+                row.append(bid.amount or '')
+            writer.writerow(row)
+        return response
+
     context = {
         'bids': bids,
         'bids_count': bids.count(),
@@ -73,9 +98,35 @@ def activeProjects(request):
     projects = Bid.objects.filter(phase='awarded').exclude(status='completed').order_by(
         f'-{field}' if order == 'desc' else field
     )
+    if request.GET.get('export') == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="active_projects.csv"'
+        writer = csv.writer(response)
+        headers = ['Project Name', 'Customer / GC', 'City', 'State', 'Status', 'Start Date', 'End Date']
+        if request.user.is_superuser:
+            headers += ['Amount', 'Approved COs']
+        writer.writerow(headers)
+        for p in projects:
+            row = [
+                p.project_name,
+                str(p.customer) if p.customer else '',
+                p.city or '',
+                p.state or '',
+                p.get_status_display() if p.status else '',
+                p.start_date or '',
+                p.end_date or '',
+            ]
+            if request.user.is_superuser:
+                row += [p.amount or '', p.approved_co_total or '']
+            writer.writerow(row)
+        return response
+
+    total_amount = sum(p.amount for p in projects if p.amount)
+
     context = {
         'projects': projects,
         'projects_count': projects.count(),
+        'total_amount': total_amount,
         'sort': sort,
         'order': order,
     }
@@ -92,6 +143,30 @@ def completedProjects(request):
     projects = Bid.objects.filter(status='completed').order_by(
         f'-{field}' if order == 'desc' else field
     )
+
+    if request.GET.get('export') == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="completed_projects.csv"'
+        writer = csv.writer(response)
+        headers = ['Project Name', 'Customer / GC', 'City', 'State', 'End Date', 'Warranty Expires', 'Days Left']
+        if request.user.is_superuser:
+            headers.append('Amount')
+        writer.writerow(headers)
+        for p in projects:
+            row = [
+                p.project_name,
+                str(p.customer) if p.customer else '',
+                p.city or '',
+                p.state or '',
+                p.end_date or '',
+                p.warranty_expires or '',
+                p.warranty_days_left if p.warranty_days_left is not None else '',
+            ]
+            if request.user.is_superuser:
+                row.append(p.amount or '')
+            writer.writerow(row)
+        return response
+
     context = {
         'projects': projects,
         'projects_count': projects.count(),

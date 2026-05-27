@@ -6,7 +6,18 @@
 <h1>Active Projects</h1>
 <div class="row">
     <div class="col-md">
-        <h6>ACTIVE PROJECTS: <strong>{{projects_count}}</strong></h6>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                {% if request.user.is_superuser %}
+                <h6 class="mb-0">TOTAL AMOUNT: <strong>${{total_amount|floatformat:2|intcomma}}</strong></h6>
+                {% endif %}
+                <h6 class="mb-0">ACTIVE PROJECTS: <strong>{{projects_count}}</strong></h6>
+            </div>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary btn-sm" href="?{{ request.GET.urlencode }}&export=csv">⬇ Export CSV</a>
+                <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">🖨 Print</button>
+            </div>
+        </div>
         <hr>
         <div class="card card-body">
             <div class="table-responsive">

@@ -95,13 +95,13 @@ def createCustomer(request):
 def customers(request):
     ctype = request.GET.get('type', 'all')
     if ctype == 'gc':
-        base_qs = Customer.objects.filter(is_general_contractor=True)
+        base_qs = Customer.objects.filter(is_general_contractor=True).order_by('name')
         page_title = 'GC Customers'
     elif ctype == 'maintenance':
-        base_qs = Customer.objects.filter(is_general_contractor=False)
+        base_qs = Customer.objects.filter(is_general_contractor=False).order_by('name')
         page_title = 'Maintenance Customers'
     else:
-        base_qs = Customer.objects.all()
+        base_qs = Customer.objects.all().order_by('name')
         page_title = 'All Customers'
 
     myFilter = CustomerFilter(request.GET, queryset=base_qs)
@@ -187,11 +187,33 @@ def maintenance(request):
     contracts = myFilter.qs
 
     active_contracts = contracts.filter(
-        end_date__gte=datetime.now())
+        end_date__gte=datetime.now()).order_by('site_name')
     total_active_contracts = active_contracts.count()
 
-    
-    context = {'all_contracts': all_contracts, 'active_contracts': active_contracts, 
+    if request.GET.get('export') == 'csv':
+        import csv
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="active_maintenance_contracts.csv"'
+        writer = csv.writer(response)
+        headers = ['Site Name', 'Customer', 'Location', 'Start Date', 'End Date', 'Visits']
+        if request.user.is_superuser:
+            headers.append('Price')
+        writer.writerow(headers)
+        for c in active_contracts:
+            row = [
+                c.site_name,
+                str(c.site_customer) if c.site_customer else '',
+                c.location or '',
+                c.start_date or '',
+                c.end_date or '',
+                c.site_visits or 0,
+            ]
+            if request.user.is_superuser:
+                row.append(c.price or '')
+            writer.writerow(row)
+        return response
+
+    context = {'all_contracts': all_contracts, 'active_contracts': active_contracts,
                'contracts_count': contracts_count, 'myFilter': myFilter, 'total_active_contracts': total_active_contracts}
 
     return render(request, 'maintenance/maintenance.html', context)
