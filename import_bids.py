@@ -29,23 +29,23 @@ from employee.models import Employee
 # Value = the column header in YOUR CSV (edit these to match Notion export)
 COL_MAP = {
     'project_name':   'project_name',
-    'customer':       'General Contractor',
-    'location':       'Location',
+    'customer':       'customer',
+    'location':       'location',
     'city':           '',               # not in Notion export — leave blank
-    'state':          '',               # not in Notion export — leave blank
+    'state':          'state',               
     'zip':            '',               # not in Notion export — leave blank
-    'amount':         'Amount',
-    'estimator':      'Estimator',
-    'phase':          'Phase',
-    'status':         'Status',
-    'bid_submitted':  'Bid Submitted',
-    'last_contact':   'Last Contact Date',
-    'next_follow_up': 'Next Follow-Up',
-    'start_date':     'Start Date',
-    'end_date':       'End Date',
-    'notes':          'Notes',
-    'follow_up_notes':'Follow-Up Notes',
-    'contract_signed':'Contract',
+    'amount':         'amount',
+    'estimator':      'estimator',
+    'phase':          'phase',
+    'status':         'status',
+    'bid_submitted':  'bid_submitted',
+    'last_contact':   'last_contact_date',
+    'next_follow_up': 'next_follow_up',
+    'start_date':     'start_date',
+    'end_date':       'end_date',
+    'notes':          'notes',
+    'follow_up_notes':'follow_up_notes',
+    'contract_signed':'contract',
 }
 
 VALID_PHASES = {'estimating', 'submitted', 'on_hold', 'likely', 'awarded', 'lost', 'dead'}
