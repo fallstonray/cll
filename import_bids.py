@@ -29,23 +29,23 @@ from employee.models import Employee
 # Value = the column header in YOUR CSV (edit these to match Notion export)
 COL_MAP = {
     'project_name':   'project_name',
-    'customer':       'customer',
-    'location':       'location',
-    'city':           'city',
-    'state':          'state',
-    'zip':            'zip',
-    'amount':         'amount',
-    'estimator':      'estimator',
-    'phase':          'phase',
-    'status':         'status',
-    'bid_submitted':  'bid_submitted',
-    'last_contact':   'last_contact_date',
-    'next_follow_up': 'next_follow_up',
-    'start_date':     'start_date',
-    'end_date':       'end_date',
-    'notes':          'notes',
-    'follow_up_notes':'follow_up_notes',
-    'contract_signed':'contract',
+    'customer':       'General Contractor',
+    'location':       'Location',
+    'city':           '',               # not in Notion export — leave blank
+    'state':          '',               # not in Notion export — leave blank
+    'zip':            '',               # not in Notion export — leave blank
+    'amount':         'Amount',
+    'estimator':      'Estimator',
+    'phase':          'Phase',
+    'status':         'Status',
+    'bid_submitted':  'Bid Submitted',
+    'last_contact':   'Last Contact Date',
+    'next_follow_up': 'Next Follow-Up',
+    'start_date':     'Start Date',
+    'end_date':       'End Date',
+    'notes':          'Notes',
+    'follow_up_notes':'Follow-Up Notes',
+    'contract_signed':'Contract',
 }
 
 VALID_PHASES = {'estimating', 'submitted', 'on_hold', 'likely', 'awarded', 'lost', 'dead'}
@@ -54,15 +54,21 @@ CSV_FILE = os.path.join(os.path.dirname(__file__), 'bids_import.csv')
 
 
 def open_csv(path):
-    """Open the CSV with automatic encoding detection (UTF-8, UTF-8-BOM, UTF-16)."""
-    for enc in ('utf-8-sig', 'utf-16', 'utf-8'):
-        try:
-            with open(path, newline='', encoding=enc) as f:
-                rows = list(csv.DictReader(f))
-            return rows, enc
-        except (UnicodeDecodeError, UnicodeError):
-            continue
-    raise ValueError(f"Could not decode {path} as UTF-8 or UTF-16. Try re-saving the CSV as UTF-8.")
+    """Open the CSV with automatic encoding and delimiter detection."""
+    encodings = ('utf-8-sig', 'utf-16', 'utf-8')
+    delimiters = (',', '\t')
+    for enc in encodings:
+        for delim in delimiters:
+            try:
+                with open(path, newline='', encoding=enc) as f:
+                    reader = csv.DictReader(f, delimiter=delim)
+                    rows = list(reader)
+                # Sanity check: if the whole header is one column, wrong delimiter
+                if rows and len(rows[0]) > 1:
+                    return rows, enc, delim
+            except (UnicodeDecodeError, UnicodeError):
+                break  # wrong encoding — try next encoding
+    raise ValueError(f"Could not decode {path}. Try re-saving the CSV as UTF-8 comma-separated.")
 
 
 def parse_date(value):
@@ -114,12 +120,13 @@ def main():
 
     # ── Load CSV ──────────────────────────────────────────────────────────────
     try:
-        rows, detected_enc = open_csv(CSV_FILE)
+        rows, detected_enc, detected_delim = open_csv(CSV_FILE)
     except ValueError as e:
         print(f"❌  {e}")
         sys.exit(1)
 
-    print(f"📄  Found {len(rows)} rows in {CSV_FILE} (encoding: {detected_enc})")
+    delim_name = 'tab-separated' if detected_delim == '\t' else 'comma-separated'
+    print(f"📄  Found {len(rows)} rows in {CSV_FILE} (encoding: {detected_enc}, {delim_name})")
     if dry_run:
         print("🔍  DRY RUN — no changes will be made\n")
 
