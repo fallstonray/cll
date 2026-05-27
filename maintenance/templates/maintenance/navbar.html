@@ -14,8 +14,16 @@
         </li>
 
         {% if perms.maintenance.view_customer %}
-        <li class="nav-item">
-          <a class="nav-link" href="/customers">Customer Center</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle nav-hover-label"
+             href="/customers/"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">Customer Center</a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="/customers/">All Customers</a></li>
+            <li><a class="dropdown-item" href="/customers/?type=gc">GC Customers</a></li>
+            <li><a class="dropdown-item" href="/customers/?type=maintenance">Maintenance Customers</a></li>
+          </ul>
         </li>
         {% endif %}
 

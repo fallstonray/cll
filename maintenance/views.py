@@ -93,13 +93,26 @@ def createCustomer(request):
 @ login_required(login_url="/login")
 @ permission_required("maintenance.view_customer", raise_exception=True)
 def customers(request):
-    customers = Customer.objects.all()
-    customers_count = customers.count()
-    myFilter = CustomerFilter(request.GET, queryset=customers)
-    customers = myFilter.qs
-    context = {'customers': customers,
-               'customers_count': customers_count, 'myFilter': myFilter}
+    ctype = request.GET.get('type', 'all')
+    if ctype == 'gc':
+        base_qs = Customer.objects.filter(is_general_contractor=True)
+        page_title = 'GC Customers'
+    elif ctype == 'maintenance':
+        base_qs = Customer.objects.filter(is_general_contractor=False)
+        page_title = 'Maintenance Customers'
+    else:
+        base_qs = Customer.objects.all()
+        page_title = 'All Customers'
 
+    myFilter = CustomerFilter(request.GET, queryset=base_qs)
+    customers = myFilter.qs
+    context = {
+        'customers': customers,
+        'customers_count': customers.count(),
+        'myFilter': myFilter,
+        'page_title': page_title,
+        'ctype': ctype,
+    }
     return render(request, 'maintenance/customers.html', context)
 
 # below is the view for a specific customer
