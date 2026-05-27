@@ -11,6 +11,7 @@ The script will DELETE all existing bids and replace them with the CSV data.
 Run a dry-run first:  python import_bids.py --dry-run
 """
 
+import io
 import os
 import sys
 import csv
@@ -54,21 +55,28 @@ CSV_FILE = os.path.join(os.path.dirname(__file__), 'bids_import.csv')
 
 
 def open_csv(path):
-    """Open the CSV with automatic encoding and delimiter detection."""
-    encodings = ('utf-8-sig', 'utf-16', 'utf-8')
-    delimiters = (',', '\t')
-    for enc in encodings:
-        for delim in delimiters:
-            try:
-                with open(path, newline='', encoding=enc) as f:
-                    reader = csv.DictReader(f, delimiter=delim)
-                    rows = list(reader)
-                # Sanity check: if the whole header is one column, wrong delimiter
-                if rows and len(rows[0]) > 1:
-                    return rows, enc, delim
-            except (UnicodeDecodeError, UnicodeError):
-                break  # wrong encoding — try next encoding
-    raise ValueError(f"Could not decode {path}. Try re-saving the CSV as UTF-8 comma-separated.")
+    """Read CSV with automatic BOM-based encoding and delimiter detection."""
+    with open(path, 'rb') as f:
+        raw = f.read()
+
+    # Detect encoding from BOM
+    if raw.startswith(b'\xff\xfe') or raw.startswith(b'\xfe\xff'):
+        text = raw.decode('utf-16')
+        enc = 'utf-16'
+    elif raw.startswith(b'\xef\xbb\xbf'):
+        text = raw.decode('utf-8-sig')
+        enc = 'utf-8-sig'
+    else:
+        text = raw.decode('utf-8')
+        enc = 'utf-8'
+
+    # Detect delimiter from first non-empty line
+    first_line = next((ln for ln in text.splitlines() if ln.strip()), '')
+    delim = '\t' if '\t' in first_line else ','
+
+    reader = csv.DictReader(io.StringIO(text), delimiter=delim)
+    rows = list(reader)
+    return rows, enc, delim
 
 
 def parse_date(value):
