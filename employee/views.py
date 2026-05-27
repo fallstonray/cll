@@ -7,22 +7,44 @@ from .forms import EmployeeForm
 # Create your views here.
 
 
+EMPLOYEE_SORT_FIELDS = {
+    'first_name': 'first_name',
+    'last_name':  'last_name',
+    'position':   'employee_title__employee_title',
+}
+
+def _employee_list(request, active):
+    sort  = request.GET.get('sort', 'last_name')
+    order = request.GET.get('order', 'asc')
+    field = EMPLOYEE_SORT_FIELDS.get(sort, 'last_name')
+    qs = Employee.objects.filter(is_active=active).order_by(
+        f'-{field}' if order == 'desc' else field
+    )
+    return qs, sort, order
+
+
 @ login_required(login_url="/login")
 def employees(request):
-    employees = Employee.objects.filter(is_active=True)
-    employees_count = employees.count()
+    qs, sort, order = _employee_list(request, active=True)
     context = {
-        'employees': employees, 'employees_count': employees_count, 'show_inactive': False,
+        'employees': qs,
+        'employees_count': qs.count(),
+        'show_inactive': False,
+        'sort': sort,
+        'order': order,
     }
     return render(request, 'employee/employees.html', context)
 
 
 @ login_required(login_url="/login")
 def inactive_employees(request):
-    employees = Employee.objects.filter(is_active=False)
-    employees_count = employees.count()
+    qs, sort, order = _employee_list(request, active=False)
     context = {
-        'employees': employees, 'employees_count': employees_count, 'show_inactive': True,
+        'employees': qs,
+        'employees_count': qs.count(),
+        'show_inactive': True,
+        'sort': sort,
+        'order': order,
     }
     return render(request, 'employee/employees.html', context)
 
