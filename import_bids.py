@@ -131,14 +131,17 @@ def main():
     }
 
     # ── Validate column mapping ───────────────────────────────────────────────
-    actual_cols = set(rows[0].keys()) if rows else set()
+    # Strip None keys (trailing commas in header) and whitespace from column names
+    actual_cols = {k.strip() for k in (rows[0].keys() if rows else []) if k is not None}
+
+    print(f"    Columns found in CSV: {sorted(actual_cols)}\n")
 
     missing_required = []
     if COL_MAP['project_name'] not in actual_cols:
         missing_required.append(COL_MAP['project_name'])
     if missing_required:
         print(f"❌  Required column(s) not found in CSV: {missing_required}")
-        print(f"    CSV has these columns: {sorted(actual_cols)}")
+        print(f"    Update COL_MAP in import_bids.py so 'project_name' maps to your actual column name.")
         sys.exit(1)
 
     print(f"✅  CSV columns look good\n")
