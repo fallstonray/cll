@@ -53,6 +53,18 @@ VALID_STATUSES = {'in_progress', 'scheduled', 'paused', 'delayed', 'completed', 
 CSV_FILE = os.path.join(os.path.dirname(__file__), 'bids_import.csv')
 
 
+def open_csv(path):
+    """Open the CSV with automatic encoding detection (UTF-8, UTF-8-BOM, UTF-16)."""
+    for enc in ('utf-8-sig', 'utf-16', 'utf-8'):
+        try:
+            with open(path, newline='', encoding=enc) as f:
+                rows = list(csv.DictReader(f))
+            return rows, enc
+        except (UnicodeDecodeError, UnicodeError):
+            continue
+    raise ValueError(f"Could not decode {path} as UTF-8 or UTF-16. Try re-saving the CSV as UTF-8.")
+
+
 def parse_date(value):
     """Accept YYYY-MM-DD, MM/DD/YYYY, or M/D/YYYY."""
     if not value or not value.strip():
@@ -101,11 +113,13 @@ def main():
         sys.exit(1)
 
     # ── Load CSV ──────────────────────────────────────────────────────────────
-    with open(CSV_FILE, newline='', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
+    try:
+        rows, detected_enc = open_csv(CSV_FILE)
+    except ValueError as e:
+        print(f"❌  {e}")
+        sys.exit(1)
 
-    print(f"📄  Found {len(rows)} rows in {CSV_FILE}")
+    print(f"📄  Found {len(rows)} rows in {CSV_FILE} (encoding: {detected_enc})")
     if dry_run:
         print("🔍  DRY RUN — no changes will be made\n")
 
@@ -117,8 +131,7 @@ def main():
     }
 
     # ── Validate column mapping ───────────────────────────────────────────────
-    with open(CSV_FILE, newline='', encoding='utf-8-sig') as f:
-        actual_cols = set(csv.DictReader(f).fieldnames or [])
+    actual_cols = set(rows[0].keys()) if rows else set()
 
     missing_required = []
     if COL_MAP['project_name'] not in actual_cols:
