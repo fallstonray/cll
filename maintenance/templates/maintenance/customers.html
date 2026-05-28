@@ -51,8 +51,8 @@
             </thead>
             <tbody>
                 {% for customer in customers %}
-                <tr>
-                    <td><a href="{% url 'customer' customer.uuid %}" class="text-decoration-none fw-semibold">{{customer.name}} {% if customer.is_general_contractor %}<span class="badge bg-warning text-dark">GC</span>{% endif %}</a></td>
+                <tr style="cursor:pointer;" onclick="window.location='{% url 'customer' customer.uuid %}'">
+                    <td>{{customer.name}} {% if customer.is_general_contractor %}<span class="badge bg-warning text-dark">GC</span>{% endif %}</td>
                     <td>{{customer.city}}</td>
                     <td>{{customer.state}}</td>
                     <td>{{customer.contact_name}}</td>

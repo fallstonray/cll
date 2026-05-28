@@ -143,6 +143,12 @@ def customer(request, uuid):
     current_work = Bid.objects.filter(
         customer=customer,
         phase__in=['awarded', 'likely']
+    ).exclude(status='completed').order_by('project_name')
+
+    completed_work = Bid.objects.filter(
+        customer=customer,
+        phase__in=['awarded', 'likely'],
+        status='completed'
     ).order_by('project_name')
 
     bid_history = Bid.objects.filter(
@@ -155,6 +161,7 @@ def customer(request, uuid):
                'active_contracts': active_contracts,
                'expired_contracts': expired_contracts, 'active_count': active_count,
                'current_work': current_work,
+               'completed_work': completed_work,
                'bid_history': bid_history}
     return render(request, 'maintenance/customer.html', context)
 

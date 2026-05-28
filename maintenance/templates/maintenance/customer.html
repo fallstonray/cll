@@ -76,17 +76,16 @@
 	<div class="col-md">
 		<div class="card card-body">
 			<div class="table-responsive">
-			<table class="table table-sm">
+			<table class="table table-sm table-hover">
 				<tr>
 					<th>Project Name</th>
 					<th>Phase</th>
+					<th>Status</th>
 					<th>Amount</th>
 					<th>Start Date</th>
-					<th>Status</th>
-					<th>View</th>
 				</tr>
 				{% for bid in current_work %}
-				<tr>
+				<tr style="cursor:pointer;" onclick="window.location='{% url 'view_bid' bid.uuid %}'">
 					<td>{{bid.project_name}}</td>
 					<td>
 						{% if bid.phase == 'awarded' %}
@@ -95,10 +94,60 @@
 							<span class="badge bg-info text-dark">Likely</span>
 						{% endif %}
 					</td>
+					<td>
+						{% if bid.status == 'in_progress' %}<span class="badge bg-primary">In Progress</span>
+						{% elif bid.status == 'scheduled' %}<span class="badge bg-info text-dark">Scheduled</span>
+						{% elif bid.status == 'paused' %}<span class="badge bg-warning text-dark">Paused</span>
+						{% elif bid.status == 'delayed' %}<span class="badge bg-danger">Delayed</span>
+						{% elif bid.status == 'completed' %}<span class="badge bg-success">Completed</span>
+						{% elif bid.status == 'waiting' %}<span class="badge bg-secondary">Waiting</span>
+						{% else %}—{% endif %}
+					</td>
 					<td>{% if bid.amount %}${{bid.amount|floatformat:2}}{% else %}—{% endif %}</td>
 					<td>{% if bid.start_date %}{{bid.start_date|date:"F j, Y"}}{% else %}—{% endif %}</td>
-					<td>{% if bid.status %}{{bid.get_status_display}}{% else %}—{% endif %}</td>
-					<td><a class="btn btn-sm btn-primary" href="{% url 'view_bid' bid.uuid %}">View</a></td>
+				</tr>
+				{% endfor %}
+			</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div><br></div>
+{% endif %}
+
+{% if completed_work %}
+<h4>Completed Landscape Work</h4>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<div class="table-responsive">
+			<table class="table table-sm table-hover">
+				<tr>
+					<th>Project Name</th>
+					<th>Status</th>
+					<th>Amount</th>
+					<th>Start Date</th>
+					<th>End Date</th>
+					<th>Warranty End Date</th>
+					<th>Change Orders</th>
+				</tr>
+				{% for bid in completed_work %}
+				<tr style="cursor:pointer;" onclick="window.location='{% url 'view_bid' bid.uuid %}'">
+					<td>{{bid.project_name}}</td>
+					<td>
+						{% if bid.status == 'in_progress' %}<span class="badge bg-primary">In Progress</span>
+						{% elif bid.status == 'scheduled' %}<span class="badge bg-info text-dark">Scheduled</span>
+						{% elif bid.status == 'paused' %}<span class="badge bg-warning text-dark">Paused</span>
+						{% elif bid.status == 'delayed' %}<span class="badge bg-danger">Delayed</span>
+						{% elif bid.status == 'completed' %}<span class="badge bg-success">Completed</span>
+						{% elif bid.status == 'waiting' %}<span class="badge bg-secondary">Waiting</span>
+						{% else %}—{% endif %}
+					</td>
+					<td>{% if bid.amount %}${{bid.amount|floatformat:2}}{% else %}—{% endif %}</td>
+					<td>{% if bid.start_date %}{{bid.start_date|date:"F j, Y"}}{% else %}—{% endif %}</td>
+					<td>{% if bid.end_date %}{{bid.end_date|date:"F j, Y"}}{% else %}—{% endif %}</td>
+					<td>{% if bid.warranty_expires %}{{bid.warranty_expires|date:"F j, Y"}}{% else %}—{% endif %}</td>
+					<td>{{bid.changeorder_set.count}}</td>
 				</tr>
 				{% endfor %}
 			</table>
@@ -115,17 +164,16 @@
 	<div class="col-md">
 		<div class="card card-body">
 			<div class="table-responsive">
-			<table class="table table-sm">
+			<table class="table table-sm table-hover">
 				<tr>
 					<th>Project Name</th>
 					<th>Phase</th>
 					<th>Amount</th>
 					<th>Bid Submitted</th>
 					<th>Estimator</th>
-					<th>View</th>
 				</tr>
 				{% for bid in bid_history %}
-				<tr>
+				<tr style="cursor:pointer;" onclick="window.location='{% url 'view_bid' bid.uuid %}'">
 					<td>{{bid.project_name}}</td>
 					<td>
 						{% if bid.phase == 'estimating' %}
@@ -143,7 +191,6 @@
 					<td>{% if bid.amount %}${{bid.amount|floatformat:2}}{% else %}—{% endif %}</td>
 					<td>{% if bid.bid_submitted %}{{bid.bid_submitted|date:"F j, Y"}}{% else %}—{% endif %}</td>
 					<td>{% if bid.estimator %}{{bid.estimator}}{% else %}—{% endif %}</td>
-					<td><a class="btn btn-sm btn-primary" href="{% url 'view_bid' bid.uuid %}">View</a></td>
 				</tr>
 				{% endfor %}
 			</table>
