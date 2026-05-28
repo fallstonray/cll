@@ -26,5 +26,6 @@ urlpatterns = [
 
     # Documents
     path('landscape/bid/<uuid:uuid>/upload_doc/', views.uploadDocument, name='upload_doc'),
+    path('landscape/doc/<uuid:uuid>/update_note/',  views.updateDocumentNote, name='update_doc_note'),
     path('landscape/doc/<uuid:uuid>/delete/',      views.deleteDocument, name='delete_doc'),
 ]

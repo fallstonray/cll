@@ -406,6 +406,17 @@ def uploadDocument(request, uuid):
 
 
 @login_required(login_url="/login")
+@permission_required('landscape.change_biddocument', raise_exception=True)
+def updateDocumentNote(request, uuid):
+    doc = BidDocument.objects.get(uuid=uuid)
+    bid_uuid = doc.bid.uuid
+    if request.method == 'POST':
+        doc.note = request.POST.get('note', '').strip()
+        doc.save()
+    return redirect('view_bid', bid_uuid)
+
+
+@login_required(login_url="/login")
 @permission_required('landscape.delete_biddocument', raise_exception=True)
 def deleteDocument(request, uuid):
     doc = BidDocument.objects.get(uuid=uuid)

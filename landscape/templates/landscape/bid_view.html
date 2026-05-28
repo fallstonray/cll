@@ -208,7 +208,21 @@
                         {% for doc in doc_entries %}
                         <tr>
                             <td>{{doc.get_doc_type_display}}</td>
-                            <td>{{doc.note|default:"—"}}</td>
+                            <td>
+                                {% if perms.landscape.change_biddocument %}
+                                <span style="cursor:pointer;" onclick="editNote('{{doc.uuid}}')" title="Click to edit">{{doc.note|default:"—"}}</span>
+                                <form method="post" action="{% url 'update_doc_note' doc.uuid %}" class="d-none" id="note-form-{{doc.uuid}}">
+                                    {% csrf_token %}
+                                    <div class="d-flex gap-1">
+                                        <input type="text" name="note" value="{{doc.note}}" class="form-control form-control-sm">
+                                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelNote('{{doc.uuid}}')">✕</button>
+                                    </div>
+                                </form>
+                                {% else %}
+                                {{doc.note|default:"—"}}
+                                {% endif %}
+                            </td>
                             <td>{{doc.uploaded_by|default:"—"}}</td>
                             <td>{{doc.uploaded_at|date:"F j, Y"}}</td>
                             <td>
@@ -240,6 +254,18 @@ document.getElementById('docTypeSelect').addEventListener('change', function () 
     noteInput.required = isOther;
     noteOptional.style.display = isOther ? 'none' : '';
 });
+function editNote(uuid) {
+    document.querySelectorAll('[id^="note-form-"]').forEach(function(f) { f.classList.add('d-none'); });
+    document.querySelectorAll('[onclick^="editNote"]').forEach(function(s) { s.classList.remove('d-none'); });
+    document.querySelector('[onclick="editNote(\'' + uuid + '\')"]').classList.add('d-none');
+    var form = document.getElementById('note-form-' + uuid);
+    form.classList.remove('d-none');
+    form.querySelector('input').focus();
+}
+function cancelNote(uuid) {
+    document.getElementById('note-form-' + uuid).classList.add('d-none');
+    document.querySelector('[onclick="editNote(\'' + uuid + '\')"]').classList.remove('d-none');
+}
 </script>
 
 <!-- Daily Log -->
