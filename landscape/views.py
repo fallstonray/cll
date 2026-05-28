@@ -324,6 +324,18 @@ def addLogEntry(request, uuid):
 
 
 @login_required(login_url="/login")
+@permission_required('landscape.change_dailylogentry', raise_exception=True)
+def updateLogEntry(request, uuid):
+    entry = DailyLogEntry.objects.get(uuid=uuid)
+    bid_uuid = entry.bid.uuid
+    if request.method == 'POST':
+        form = DailyLogEntryForm(request.POST, instance=entry)
+        if form.is_valid():
+            form.save()
+    return redirect('view_bid', bid_uuid)
+
+
+@login_required(login_url="/login")
 @permission_required('landscape.delete_dailylogentry', raise_exception=True)
 def deleteLogEntry(request, uuid):
     entry = DailyLogEntry.objects.get(uuid=uuid)

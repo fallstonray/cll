@@ -21,5 +21,6 @@ urlpatterns = [
 
     # Daily Log
     path('landscape/bid/<uuid:uuid>/add_log/', views.addLogEntry,    name='add_log'),
+    path('landscape/log/<uuid:uuid>/update/',  views.updateLogEntry, name='update_log'),
     path('landscape/log/<uuid:uuid>/delete/',  views.deleteLogEntry, name='delete_log'),
 ]

@@ -182,15 +182,44 @@
             <!-- Existing Entries -->
             {% for log in log_entries %}
             <div class="mb-3">
-                <strong>{{log.date|date:"F j, Y"}}</strong>
-                {% if log.author %} &mdash; <em>{{log.author}}</em>{% endif %}
-                {% if perms.landscape.delete_dailylogentry %}
-                <form method="post" action="{% url 'delete_log' log.uuid %}" style="display:inline; float:right;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this log entry?')">Delete</button>
-                </form>
-                {% endif %}
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{log.date|date:"F j, Y"}}</strong>
+                        {% if log.author %}<span class="text-muted ms-3 fst-italic small">{{log.author}}</span>{% endif %}
+                    </div>
+                    <div class="d-flex gap-2">
+                        {% if perms.landscape.change_dailylogentry %}
+                        <button class="btn btn-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#edit-log-{{log.uuid}}">Edit</button>
+                        {% endif %}
+                        {% if perms.landscape.delete_dailylogentry %}
+                        <form method="post" action="{% url 'delete_log' log.uuid %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this log entry?')">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
                 <p class="mt-1 mb-0">{{log.entry|linebreaksbr}}</p>
+                {% if perms.landscape.change_dailylogentry %}
+                <div class="collapse mt-2" id="edit-log-{{log.uuid}}">
+                    <form method="post" action="{% url 'update_log' log.uuid %}">
+                        {% csrf_token %}
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-2">
+                                <label class="form-label form-label-sm">Date</label>
+                                <input type="date" name="date" class="form-control form-control-sm" value="{{log.date|date:'Y-m-d'}}">
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label form-label-sm">Entry</label>
+                                <textarea name="entry" class="form-control form-control-sm" rows="3">{{log.entry}}</textarea>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">Update</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
             </div>
             {% if not forloop.last %}<hr>{% endif %}
             {% empty %}
