@@ -102,6 +102,7 @@ DOC_TYPE_CHOICES = [
     ('estimating_sheet', 'Estimating Sheet'),
     ('plans',            'Plans'),
     ('change_order',     'Change Order'),
+    ('as_built',         'As Built'),
     ('other',            'Other'),
 ]
 
