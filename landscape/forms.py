@@ -1,5 +1,5 @@
 from django.forms import ModelForm, DateInput
-from .models import Bid, ChangeOrder, DailyLogEntry
+from .models import Bid, ChangeOrder, DailyLogEntry, BidDocument
 from employee.models import Employee
 from maintenance.models import Customer
 
@@ -71,3 +71,10 @@ class DailyLogEntryForm(ModelForm):
         widgets = {
             'date': DateInput(attrs={'type': 'date'}),
         }
+
+
+class BidDocumentForm(ModelForm):
+    class Meta:
+        model = BidDocument
+        fields = ['name', 'doc_type', 'other_desc', 'file']
+        labels = {'other_desc': 'Describe document (if Other)'}
