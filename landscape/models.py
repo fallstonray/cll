@@ -114,7 +114,7 @@ def _bid_doc_upload_path(instance, filename):
 class BidDocument(models.Model):
     bid         = models.ForeignKey(Bid, on_delete=models.CASCADE)
     file        = models.FileField(upload_to=_bid_doc_upload_path)
-    name        = models.CharField(max_length=255)
+    note        = models.CharField(max_length=255, blank=True)
     doc_type    = models.CharField(max_length=20, choices=DOC_TYPE_CHOICES)
     other_desc  = models.CharField(max_length=100, blank=True)
     uploaded_by = models.ForeignKey('employee.Employee', null=True, blank=True, on_delete=models.SET_NULL)
@@ -125,7 +125,7 @@ class BidDocument(models.Model):
         ordering = ['-uploaded_at']
 
     def __str__(self):
-        return self.name
+        return self.note or self.get_doc_type_display()
 
 
 class DailyLogEntry(models.Model):

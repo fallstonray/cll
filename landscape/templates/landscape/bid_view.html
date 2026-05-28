@@ -165,10 +165,6 @@
             <form method="post" action="{% url 'upload_doc' bid.uuid %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row g-2 align-items-end mb-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Document Name</label>
-                        <input type="text" name="name" class="form-control" placeholder="e.g. Original Proposal" required>
-                    </div>
                     <div class="col-md-2">
                         <label class="form-label">Type</label>
                         <select name="doc_type" class="form-select" id="docTypeSelect">
@@ -181,11 +177,11 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    <div class="col-md-2" id="otherDescField" style="display:none;">
-                        <label class="form-label">Describe</label>
-                        <input type="text" name="other_desc" class="form-control" placeholder="e.g. Warranty Certificate">
-                    </div>
                     <div class="col-md-3">
+                        <label class="form-label">Note <span class="text-muted fw-normal" id="noteOptional">(optional)</span></label>
+                        <input type="text" name="note" id="noteInput" class="form-control" placeholder="">
+                    </div>
+                    <div class="col-md-4">
                         <label class="form-label">File</label>
                         <input type="file" name="file" class="form-control" required>
                     </div>
@@ -201,8 +197,8 @@
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th>Name</th>
                             <th>Type</th>
+                            <th>Note</th>
                             <th>Uploaded By</th>
                             <th>Date</th>
                             <th>Actions</th>
@@ -211,8 +207,8 @@
                     <tbody>
                         {% for doc in doc_entries %}
                         <tr>
-                            <td>{{doc.name}}</td>
-                            <td>{% if doc.doc_type == 'other' %}{{doc.other_desc|default:"Other"}}{% else %}{{doc.get_doc_type_display}}{% endif %}</td>
+                            <td>{{doc.get_doc_type_display}}</td>
+                            <td>{{doc.note|default:"—"}}</td>
                             <td>{{doc.uploaded_by|default:"—"}}</td>
                             <td>{{doc.uploaded_at|date:"F j, Y"}}</td>
                             <td>
@@ -238,7 +234,11 @@
 <br>
 <script>
 document.getElementById('docTypeSelect').addEventListener('change', function () {
-    document.getElementById('otherDescField').style.display = this.value === 'other' ? '' : 'none';
+    var isOther = this.value === 'other';
+    var noteInput = document.getElementById('noteInput');
+    var noteOptional = document.getElementById('noteOptional');
+    noteInput.required = isOther;
+    noteOptional.style.display = isOther ? 'none' : '';
 });
 </script>
 

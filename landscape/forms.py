@@ -76,5 +76,5 @@ class DailyLogEntryForm(ModelForm):
 class BidDocumentForm(ModelForm):
     class Meta:
         model = BidDocument
-        fields = ['name', 'doc_type', 'other_desc', 'file']
-        labels = {'other_desc': 'Describe document (if Other)'}
+        fields = ['doc_type', 'note', 'file']
+        labels = {'note': 'Note'}

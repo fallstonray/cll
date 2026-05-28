@@ -385,7 +385,8 @@ def uploadDocument(request, uuid):
         form = BidDocumentForm(request.POST, request.FILES)
         if form.is_valid():
             doc_type = form.cleaned_data['doc_type']
-            other_desc = form.cleaned_data.get('other_desc', '')
+            note = form.cleaned_data.get('note', '')
+            other_desc = note if doc_type == 'other' else ''
             uploaded_file = request.FILES['file']
             _, ext = os.path.splitext(uploaded_file.name)
             filename = _build_doc_filename(bid, doc_type, other_desc, ext)
@@ -395,7 +396,7 @@ def uploadDocument(request, uuid):
                 uploaded_by = None
             doc = BidDocument(
                 bid=bid,
-                name=form.cleaned_data['name'],
+                note=note,
                 doc_type=doc_type,
                 other_desc=other_desc,
                 uploaded_by=uploaded_by,
