@@ -92,9 +92,9 @@ def bidPipeline(request):
 @permission_required('landscape.view_bid', raise_exception=True)
 def activeProjects(request):
     """Awarded projects that are not yet completed."""
-    sort  = request.GET.get('sort', 'project_name')
+    sort  = request.GET.get('sort', 'start_date')
     order = request.GET.get('order', 'asc')
-    field = ACTIVE_SORT_FIELDS.get(sort, 'project_name')
+    field = ACTIVE_SORT_FIELDS.get(sort, 'start_date')
     projects = Bid.objects.filter(phase__in=['awarded', 'likely']).exclude(status='completed').order_by(
         f'-{field}' if order == 'desc' else field
     )
