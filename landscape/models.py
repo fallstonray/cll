@@ -96,6 +96,37 @@ class ChangeOrder(models.Model):
         return f"{self.name} — {self.bid.project_name}"
 
 
+DOC_TYPE_CHOICES = [
+    ('proposal',         'Proposal'),
+    ('signed_contract',  'Signed Contract'),
+    ('estimating_sheet', 'Estimating Sheet'),
+    ('plans',            'Plans'),
+    ('change_order',     'Change Order'),
+    ('other',            'Other'),
+]
+
+
+def _bid_doc_upload_path(instance, filename):
+    return f"bid_documents/{instance.bid.uuid}/{filename}"
+
+
+class BidDocument(models.Model):
+    bid         = models.ForeignKey(Bid, on_delete=models.CASCADE)
+    file        = models.FileField(upload_to=_bid_doc_upload_path)
+    name        = models.CharField(max_length=255)
+    doc_type    = models.CharField(max_length=20, choices=DOC_TYPE_CHOICES)
+    other_desc  = models.CharField(max_length=100, blank=True)
+    uploaded_by = models.ForeignKey('employee.Employee', null=True, blank=True, on_delete=models.SET_NULL)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uuid        = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+    class Meta:
+        ordering = ['-uploaded_at']
+
+    def __str__(self):
+        return self.name
+
+
 class DailyLogEntry(models.Model):
     bid        = models.ForeignKey(Bid, on_delete=models.CASCADE)
     date       = models.DateField(default=date.today)

@@ -1,12 +1,37 @@
 import csv
+import os
+import re
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from datetime import date, timedelta
-from .models import Bid, ChangeOrder, DailyLogEntry
-from .forms import BidForm, BidUpdateForm, ChangeOrderForm, DailyLogEntryForm
+from .models import Bid, ChangeOrder, DailyLogEntry, BidDocument
+from .forms import BidForm, BidUpdateForm, ChangeOrderForm, DailyLogEntryForm, BidDocumentForm
 from .filters import BidFilter
 from employee.models import Employee
+
+
+# ── Document filename helpers ─────────────────────────────────────────────────
+
+def _sanitize_slug(s):
+    s = s.lower().strip()
+    s = re.sub(r'[^\w\s]', '', s)
+    s = re.sub(r'\s+', '_', s)
+    return re.sub(r'_+', '_', s).strip('_')
+
+
+def _build_doc_filename(bid, doc_type, other_desc, ext):
+    project_slug = _sanitize_slug(bid.project_name)
+    desc_slug = _sanitize_slug(other_desc or 'other') if doc_type == 'other' else doc_type
+    base = f"{project_slug}_{desc_slug}"
+    ext = ext.lower().lstrip('.')
+    if doc_type == 'other':
+        existing_count = bid.biddocument_set.filter(doc_type='other', other_desc=other_desc).count()
+    else:
+        existing_count = bid.biddocument_set.filter(doc_type=doc_type).count()
+    if existing_count == 0:
+        return f"{base}.{ext}"
+    return f"{base}_{existing_count + 1}.{ext}"
 
 
 # ── List / Pipeline Views ─────────────────────────────────────────────────────
@@ -223,11 +248,15 @@ def viewBid(request, uuid):
     )
     log_entries = bid.dailylogentry_set.all()  # ordered by Meta: -date, -created_at
     log_form = DailyLogEntryForm()
+    doc_entries = bid.biddocument_set.all()
+    doc_form = BidDocumentForm()
     context = {
         'bid': bid,
         'change_orders': change_orders,
         'log_entries': log_entries,
         'log_form': log_form,
+        'doc_entries': doc_entries,
+        'doc_form': doc_form,
     }
     return render(request, 'landscape/bid_view.html', context)
 
@@ -344,3 +373,44 @@ def deleteLogEntry(request, uuid):
         entry.delete()
         return redirect('view_bid', bid_uuid)
     return render(request, 'landscape/bid_delete.html', {'item': entry})
+
+
+# ── Document CRUD ─────────────────────────────────────────────────────────────
+
+@login_required(login_url="/login")
+@permission_required('landscape.add_biddocument', raise_exception=True)
+def uploadDocument(request, uuid):
+    bid = Bid.objects.get(uuid=uuid)
+    if request.method == 'POST':
+        form = BidDocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            doc_type = form.cleaned_data['doc_type']
+            other_desc = form.cleaned_data.get('other_desc', '')
+            uploaded_file = request.FILES['file']
+            _, ext = os.path.splitext(uploaded_file.name)
+            filename = _build_doc_filename(bid, doc_type, other_desc, ext)
+            try:
+                uploaded_by = Employee.objects.get(user=request.user)
+            except Employee.DoesNotExist:
+                uploaded_by = None
+            doc = BidDocument(
+                bid=bid,
+                name=form.cleaned_data['name'],
+                doc_type=doc_type,
+                other_desc=other_desc,
+                uploaded_by=uploaded_by,
+            )
+            doc.file.save(filename, uploaded_file, save=True)
+    return redirect('view_bid', bid.uuid)
+
+
+@login_required(login_url="/login")
+@permission_required('landscape.delete_biddocument', raise_exception=True)
+def deleteDocument(request, uuid):
+    doc = BidDocument.objects.get(uuid=uuid)
+    bid_uuid = doc.bid.uuid
+    if request.method == 'POST':
+        doc.file.delete(save=False)
+        doc.delete()
+        return redirect('view_bid', bid_uuid)
+    return render(request, 'landscape/bid_delete.html', {'item': doc})
