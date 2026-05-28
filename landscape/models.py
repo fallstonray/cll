@@ -67,6 +67,10 @@ class Bid(models.Model):
         return sum(co.amount for co in self.changeorder_set.filter(status='approved'))
 
     @property
+    def approved_co_count(self):
+        return self.changeorder_set.filter(status='approved').count()
+
+    @property
     def warranty_expires(self):
         if self.end_date and self.warranty_days:
             return self.end_date + timedelta(days=self.warranty_days)

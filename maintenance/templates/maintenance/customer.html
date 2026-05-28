@@ -83,6 +83,7 @@
 					<th>Status</th>
 					<th>Amount</th>
 					<th>Start Date</th>
+					<th>Change Orders</th>
 				</tr>
 				{% for bid in current_work %}
 				<tr style="cursor:pointer;" onclick="window.location='{% url 'view_bid' bid.uuid %}'">
@@ -105,6 +106,7 @@
 					</td>
 					<td>{% if bid.amount %}${{bid.amount|floatformat:2}}{% else %}—{% endif %}</td>
 					<td>{% if bid.start_date %}{{bid.start_date|date:"F j, Y"}}{% else %}—{% endif %}</td>
+					<td>{{bid.approved_co_count}}</td>
 				</tr>
 				{% endfor %}
 			</table>
@@ -147,7 +149,7 @@
 					<td>{% if bid.start_date %}{{bid.start_date|date:"F j, Y"}}{% else %}—{% endif %}</td>
 					<td>{% if bid.end_date %}{{bid.end_date|date:"F j, Y"}}{% else %}—{% endif %}</td>
 					<td>{% if bid.warranty_expires %}{{bid.warranty_expires|date:"F j, Y"}}{% else %}—{% endif %}</td>
-					<td>{{bid.changeorder_set.count}}</td>
+					<td>{{bid.approved_co_count}}</td>
 				</tr>
 				{% endfor %}
 			</table>
