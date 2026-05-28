@@ -26,4 +26,8 @@ class ContractForm(ModelForm):
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
-        fields = '__all__'
+        fields = ['name', 'contact_name', 'phone1', 'phone2', 'email', 'notes', 'is_general_contractor']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['contact_name'].required = False
