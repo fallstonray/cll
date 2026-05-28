@@ -32,6 +32,7 @@
                             <th><a href="{% sort_url 'phase' %}" class="text-decoration-none link-light">Phase {% if sort == 'phase' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'status' %}" class="text-decoration-none link-light">Status {% if sort == 'status' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'start_date' %}" class="text-decoration-none link-light">Start Date {% if sort == 'start_date' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th class="text-center">Contract</th>
                             {% if request.user.is_superuser %}<th>Approved COs</th>{% endif %}
                         </tr>
                     </thead>
@@ -57,6 +58,13 @@
                                 {% else %}—{% endif %}
                             </td>
                             <td>{{project.start_date|date:"F j, Y"|default:"—"}}</td>
+                            <td class="text-center">
+                                {% if project.contract_signed %}
+                                <span title="Contract signed">✅</span>
+                                {% else %}
+                                <span title="No contract">☐</span>
+                                {% endif %}
+                            </td>
                             {% if request.user.is_superuser %}<td>{% if project.approved_co_total %}${{project.approved_co_total|floatformat:2|intcomma}}{% else %}—{% endif %}</td>{% endif %}
                         </tr>
                         {% empty %}

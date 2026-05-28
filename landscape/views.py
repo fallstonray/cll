@@ -50,9 +50,9 @@ def bidPipeline(request):
     bids = Bid.objects.exclude(phase__in=['awarded', 'likely'])
     myFilter = BidFilter(request.GET, queryset=bids)
 
-    sort  = request.GET.get('sort', 'project_name')
-    order = request.GET.get('order', 'asc')
-    field = PIPELINE_SORT_FIELDS.get(sort, 'project_name')
+    sort  = request.GET.get('sort', 'bid_submitted')
+    order = request.GET.get('order', 'desc')
+    field = PIPELINE_SORT_FIELDS.get(sort, 'bid_submitted')
     bids  = myFilter.qs.order_by(f'-{field}' if order == 'desc' else field)
 
     if request.GET.get('export') == 'csv':
