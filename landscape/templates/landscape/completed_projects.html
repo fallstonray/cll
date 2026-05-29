@@ -20,9 +20,9 @@
                     <thead class="table-dark">
                         <tr>
                             <th><a href="{% sort_url 'project_name' %}" class="text-decoration-none link-light">Project Name {% if sort == 'project_name' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
-                            <th><a href="{% sort_url 'customer' %}" class="text-decoration-none link-light">Customer / GC {% if sort == 'customer' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'city' %}" class="text-decoration-none link-light">City {% if sort == 'city' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'state' %}" class="text-decoration-none link-light">State {% if sort == 'state' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th><a href="{% sort_url 'customer' %}" class="text-decoration-none link-light">Customer / GC {% if sort == 'customer' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             {% if request.user.is_superuser %}<th><a href="{% sort_url 'amount' %}" class="text-decoration-none link-light">Amount {% if sort == 'amount' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>{% endif %}
                             <th><a href="{% sort_url 'end_date' %}" class="text-decoration-none link-light">End Date {% if sort == 'end_date' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th>Warranty Expires</th>
@@ -33,9 +33,9 @@
                         {% for project in projects %}
                         <tr>
                             <td><a href="{% url 'view_bid' project.uuid %}" class="text-decoration-none fw-semibold">{{project.project_name}}</a></td>
-                            <td>{% if project.customer %}<a href="{% url 'customer' project.customer.uuid %}" class="text-decoration-none text-secondary">{{project.customer}}</a>{% else %}—{% endif %}</td>
                             <td>{{project.city|default:"—"}}</td>
                             <td>{{project.state|default:"—"}}</td>
+                            <td>{% if project.customer %}<a href="{% url 'customer' project.customer.uuid %}" class="text-decoration-none text-secondary">{{project.customer}}</a>{% else %}—{% endif %}</td>
                             {% if request.user.is_superuser %}<td>{% if project.amount %}${{project.amount|floatformat:2|intcomma}}{% else %}—{% endif %}</td>{% endif %}
                             <td>{{project.end_date|date:"F j, Y"|default:"—"}}</td>
                             <td>{{project.warranty_expires|date:"F j, Y"|default:"—"}}</td>
