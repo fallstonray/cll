@@ -252,6 +252,7 @@ def viewBid(request, uuid):
     doc_form = BidDocumentForm()
     context = {
         'bid': bid,
+        'bid_form': BidUpdateForm(instance=bid),
         'change_orders': change_orders,
         'log_entries': log_entries,
         'log_form': log_form,
