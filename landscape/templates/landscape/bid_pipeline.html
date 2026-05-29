@@ -30,9 +30,9 @@
                     <thead class="table-dark">
                         <tr>
                             <th><a href="{% sort_url 'project_name' %}" class="text-decoration-none link-light">Project Name {% if sort == 'project_name' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
-                            <th><a href="{% sort_url 'customer' %}" class="text-decoration-none link-light">Customer / GC {% if sort == 'customer' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'city' %}" class="text-decoration-none link-light">City {% if sort == 'city' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'state' %}" class="text-decoration-none link-light">State {% if sort == 'state' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th><a href="{% sort_url 'customer' %}" class="text-decoration-none link-light">Customer / GC {% if sort == 'customer' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             {% if request.user.is_superuser %}<th><a href="{% sort_url 'amount' %}" class="text-decoration-none link-light">Amount {% if sort == 'amount' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>{% endif %}
                             <th><a href="{% sort_url 'phase' %}" class="text-decoration-none link-light">Phase {% if sort == 'phase' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'estimator' %}" class="text-decoration-none link-light">Estimator {% if sort == 'estimator' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
@@ -43,9 +43,9 @@
                         {% for bid in bids %}
                         <tr>
                             <td><a href="{% url 'view_bid' bid.uuid %}" class="text-decoration-none fw-semibold">{{bid.project_name}}</a></td>
-                            <td>{% if bid.customer %}<a href="{% url 'customer' bid.customer.uuid %}" class="text-decoration-none text-secondary">{{bid.customer}}</a>{% else %}—{% endif %}</td>
                             <td>{{bid.city|default:"—"}}</td>
                             <td>{{bid.state|default:"—"}}</td>
+                            <td>{% if bid.customer %}<a href="{% url 'customer' bid.customer.uuid %}" class="text-decoration-none text-secondary">{{bid.customer}}</a>{% else %}—{% endif %}</td>
                             {% if request.user.is_superuser %}<td>{% if bid.amount %}${{bid.amount|floatformat:2|intcomma}}{% else %}—{% endif %}</td>{% endif %}
                             <td>
                                 {% if bid.phase == 'estimating' %}<span class="badge bg-secondary">Estimating</span>
