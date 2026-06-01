@@ -505,8 +505,7 @@ function cancelNote(uuid) {
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <strong>{{log.date|date:"F j, Y"}}</strong>
-                        {% if log.author %}<span class="text-muted ms-3 fst-italic small">{{log.author}}</span>{% endif %}
+                        <strong>{{log.date|date:"l, F j, Y"}}</strong>{% if log.author %}<span class="text-muted ms-2 fst-italic small"> — Logged by {{log.author}}</span>{% endif %}
                     </div>
                     <div class="d-flex gap-2">
                         {% if perms.landscape.change_dailylogentry %}
