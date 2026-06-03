@@ -423,7 +423,7 @@ function cancelNote(uuid) {
     <div class="col">
         <div class="card card-body">
             <div class="d-flex justify-content-between align-items-center">
-                <h4>Change Orders{% if request.user.is_superuser %} &nbsp;<small class="text-muted fs-6">Approved Total: ${{bid.approved_co_total|floatformat:2|intcomma}}</small>{% endif %}</h4>
+                <h4>Change Orders &nbsp;<small class="text-muted fs-6">Approved Total: ${{bid.approved_co_total|floatformat:2|intcomma}}</small></h4>
                 <a class="btn btn-success btn-sm" href="{% url 'add_co' bid.uuid %}">+ Add Change Order</a>
             </div>
             <hr>
@@ -433,7 +433,7 @@ function cancelNote(uuid) {
                         <tr>
                             <th>CO #</th>
                             <th>Name</th>
-                            {% if request.user.is_superuser %}<th>Amount</th>{% endif %}
+                            <th>Amount</th>
                             <th>Status</th>
                             <th>Date Submitted</th>
                             <th>Scope</th>
@@ -445,7 +445,7 @@ function cancelNote(uuid) {
                         <tr>
                             <td>{% if co.status == 'approved' and co.co_number %}{{co.co_number}}{% else %}—{% endif %}</td>
                             <td><a href="{% url 'view_co' co.uuid %}" class="text-decoration-none fw-semibold">{{co.name}}</a></td>
-                            {% if request.user.is_superuser %}<td>${{co.amount|floatformat:2|intcomma}}</td>{% endif %}
+                            <td>${{co.amount|floatformat:2|intcomma}}</td>
                             <td>
                                 {% if co.status == 'approved' %}<span class="badge bg-success">Approved</span>
                                 {% elif co.status == 'rejected' %}<span class="badge bg-danger">Rejected</span>
