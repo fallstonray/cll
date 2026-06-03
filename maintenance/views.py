@@ -275,8 +275,17 @@ def maintenance(request):
     myFilter = ContractFilter(request.GET, queryset=all_contracts)
     contracts = myFilter.qs
 
-    active_contracts = contracts.filter(
-        end_date__gte=datetime.now()).order_by('site_name')
+    sort_fields = {
+        'customer':  'site_customer__name',
+        'site_name': 'site_name',
+    }
+    sort  = request.GET.get('sort', 'site_name')
+    order = request.GET.get('order', 'asc')
+    field = sort_fields.get(sort, 'site_name')
+
+    active_contracts = contracts.filter(end_date__gte=datetime.now()).order_by(
+        f'-{field}' if order == 'desc' else field
+    )
     total_active_contracts = active_contracts.count()
 
     if request.GET.get('export') == 'csv':
@@ -303,7 +312,9 @@ def maintenance(request):
         return response
 
     context = {'all_contracts': all_contracts, 'active_contracts': active_contracts,
-               'contracts_count': contracts_count, 'myFilter': myFilter, 'total_active_contracts': total_active_contracts}
+               'contracts_count': contracts_count, 'myFilter': myFilter,
+               'total_active_contracts': total_active_contracts,
+               'sort': sort, 'order': order}
 
     return render(request, 'maintenance/maintenance.html', context)
 

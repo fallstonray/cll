@@ -1,5 +1,6 @@
 {% extends 'maintenance/main.html' %}
 {% load humanize %}
+{% load landscape_tags %}
 {% block content %}
 
 <h1>Active Maintenance Contracts</h1>
@@ -43,8 +44,8 @@
         <table class="table table-sm table-striped table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th>Customer</th>
-                    <th>Site Name</th>
+                    <th><a href="{% sort_url 'customer' %}" class="text-decoration-none link-light">Customer {% if sort == 'customer' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                    <th><a href="{% sort_url 'site_name' %}" class="text-decoration-none link-light">Site Name {% if sort == 'site_name' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                     <th>Location</th>
                     <th>Start Date</th>
                     <th>End Date</th>
