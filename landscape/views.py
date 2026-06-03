@@ -3,6 +3,7 @@ import os
 import re
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from datetime import date, timedelta
 from .models import Bid, ChangeOrder, DailyLogEntry, BidDocument
@@ -103,12 +104,16 @@ def bidPipeline(request):
             writer.writerow(row)
         return response
 
+    filter_fields = {'project_name', 'state', 'estimator', 'customer', 'phase'}
+    is_filtered = any(request.GET.get(f) for f in filter_fields)
+
     context = {
         'bids': bids,
         'bids_count': bids.count(),
         'myFilter': myFilter,
         'sort': sort,
         'order': order,
+        'is_filtered': is_filtered,
     }
     return render(request, 'landscape/bid_pipeline.html', context)
 
@@ -236,6 +241,7 @@ def createBid(request):
 def viewBid(request, uuid):
     bid = Bid.objects.get(uuid=uuid)
     from django.db.models import Case, When, Value, IntegerField
+    from django.db.models.functions import Cast
     change_orders = bid.changeorder_set.all().order_by(
         Case(
             When(status='approved', then=Value(0)),
@@ -244,11 +250,23 @@ def viewBid(request, uuid):
             default=Value(3),
             output_field=IntegerField(),
         ),
+        # Within approved: blank/null co_number sorts after numbered ones
+        Case(
+            When(status='approved', co_number__isnull=False, co_number__gt='', then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
+        ),
+        # Sort approved numbered COs numerically by co_number
+        Case(
+            When(status='approved', co_number__isnull=False, co_number__gt='', then=Cast('co_number', IntegerField())),
+            default=Value(999999),
+            output_field=IntegerField(),
+        ),
         'date_submitted',
     )
     log_entries = bid.dailylogentry_set.all()  # ordered by Meta: -date, -created_at
     log_form = DailyLogEntryForm()
-    doc_entries = bid.biddocument_set.all()
+    doc_entries = bid.biddocument_set.order_by('doc_type', 'note')
     doc_form = BidDocumentForm()
     context = {
         'bid': bid,
@@ -271,6 +289,7 @@ def updateBid(request, uuid):
         form = BidUpdateForm(request.POST, instance=bid)
         if form.is_valid():
             form.save()
+            messages.success(request, "Bid updated.")
             return redirect('view_bid', uuid)
     return render(request, 'landscape/bid_form.html', {'form': form, 'action': 'Update Bid'})
 
@@ -281,6 +300,7 @@ def deleteBid(request, uuid):
     bid = Bid.objects.get(uuid=uuid)
     if request.method == 'POST':
         bid.delete()
+        messages.success(request, "Bid deleted.")
         return redirect('bid_pipeline')
     return render(request, 'landscape/bid_delete.html', {'item': bid})
 
@@ -305,6 +325,7 @@ def addChangeOrder(request, uuid):
             co = form.save(commit=False)
             co.bid = bid
             co.save()
+            messages.success(request, "Change order added.")
             return redirect('view_bid', bid.uuid)
     return render(request, 'landscape/co_form.html', {'form': form, 'bid': bid})
 
@@ -318,6 +339,7 @@ def updateChangeOrder(request, uuid):
         form = ChangeOrderForm(request.POST, instance=co)
         if form.is_valid():
             form.save()
+            messages.success(request, "Change order updated.")
             return redirect('view_bid', co.bid.uuid)
     return render(request, 'landscape/co_form.html', {'form': form, 'bid': co.bid})
 
@@ -329,6 +351,7 @@ def deleteChangeOrder(request, uuid):
     bid_uuid = co.bid.uuid
     if request.method == 'POST':
         co.delete()
+        messages.success(request, "Change order deleted.")
         return redirect('view_bid', bid_uuid)
     return render(request, 'landscape/bid_delete.html', {'item': co})
 
@@ -350,6 +373,7 @@ def addLogEntry(request, uuid):
             except Employee.DoesNotExist:
                 entry.author = None
             entry.save()
+            messages.success(request, "Log entry added.")
     return redirect('view_bid', bid.uuid)
 
 
@@ -362,6 +386,7 @@ def updateLogEntry(request, uuid):
         form = DailyLogEntryForm(request.POST, instance=entry)
         if form.is_valid():
             form.save()
+            messages.success(request, "Log entry updated.")
     return redirect('view_bid', bid_uuid)
 
 
@@ -372,6 +397,7 @@ def deleteLogEntry(request, uuid):
     bid_uuid = entry.bid.uuid
     if request.method == 'POST':
         entry.delete()
+        messages.success(request, "Log entry deleted.")
         return redirect('view_bid', bid_uuid)
     return render(request, 'landscape/bid_delete.html', {'item': entry})
 
@@ -403,6 +429,7 @@ def uploadDocument(request, uuid):
                 uploaded_by=uploaded_by,
             )
             doc.file.save(filename, uploaded_file, save=True)
+            messages.success(request, "Document uploaded.")
     return redirect('view_bid', bid.uuid)
 
 
@@ -414,6 +441,7 @@ def updateDocumentNote(request, uuid):
     if request.method == 'POST':
         doc.note = request.POST.get('note', '').strip()
         doc.save()
+        messages.success(request, "Note updated.")
     return redirect('view_bid', bid_uuid)
 
 
@@ -425,5 +453,6 @@ def deleteDocument(request, uuid):
     if request.method == 'POST':
         doc.file.delete(save=False)
         doc.delete()
+        messages.success(request, "Document deleted.")
         return redirect('view_bid', bid_uuid)
     return render(request, 'landscape/bid_delete.html', {'item': doc})

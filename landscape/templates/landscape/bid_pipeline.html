@@ -13,8 +13,12 @@
                 <div class="card card-body">
                     <form method="get">
                         {{myFilter.form}}
-                        <div class="d-flex gap-2 flex-wrap mt-2">
+                        <div class="d-flex gap-2 flex-wrap mt-2 align-items-center">
                             <button class="btn btn-primary" type="submit">Search</button>
+                            {% if is_filtered %}
+                            <a class="btn btn-outline-warning btn-sm" href="{% url 'bid_pipeline' %}">✕ Clear Filters</a>
+                            <span class="badge bg-warning text-dark">Filters active</span>
+                            {% endif %}
                             <a class="btn btn-success" href="{% url 'create_bid' %}">+ New Bid</a>
                             <a class="btn btn-outline-secondary" href="?{{ request.GET.urlencode }}&export=csv">⬇ Export CSV</a>
                             <button class="btn btn-outline-secondary" onclick="window.print()">🖨 Print</button>

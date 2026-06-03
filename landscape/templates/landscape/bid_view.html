@@ -1,8 +1,7 @@
 {% extends 'maintenance/main.html' %}
 {% load humanize %}
 {% block content %}
-<br>
-<div class="row">
+<div class="row mt-3 mb-4">
     <div class="col">
         <div class="card card-body" id="total-orders">
             <h3 class="text-center text-white"><strong>{{bid.project_name}}</strong></h3>
@@ -20,9 +19,8 @@
         </div>
     </div>
 </div>
-<br>
 
-<div class="row">
+<div class="row mb-4">
     <!-- Bid Details -->
     <div class="col-md">
         <div class="card card-body">
@@ -306,18 +304,17 @@
         </div>
     </div>
 </div>
-<br>
 
 {% if bid.is_project %}
 <!-- Documents -->
-<div class="row">
+<div class="row mb-4">
     <div class="col">
         <div class="card card-body">
             <h4>Documents</h4>
             <hr>
             {% if doc_entries %}
             <div class="table-responsive">
-                <table class="table table-sm">
+                <table class="table table-sm table-striped">
                     <thead>
                         <tr>
                             <th>Type</th>
@@ -399,7 +396,6 @@
         </div>
     </div>
 </div>
-<br>
 <script>
 document.getElementById('docTypeSelect').addEventListener('change', function () {
     var isOther = this.value === 'other';
@@ -423,7 +419,7 @@ function cancelNote(uuid) {
 </script>
 
 <!-- Change Orders -->
-<div class="row">
+<div class="row mb-4">
     <div class="col">
         <div class="card card-body">
             <div class="d-flex justify-content-between align-items-center">
@@ -432,7 +428,7 @@ function cancelNote(uuid) {
             </div>
             <hr>
             <div class="table-responsive">
-                <table class="table table-sm">
+                <table class="table table-sm table-striped">
                     <thead>
                         <tr>
                             <th>CO #</th>
@@ -474,10 +470,9 @@ function cancelNote(uuid) {
         </div>
     </div>
 </div>
-<br>
 
 <!-- Daily Log -->
-<div class="row">
+<div class="row mb-4">
     <div class="col">
         <div class="card card-body">
             <h4>Daily Log</h4>
@@ -548,7 +543,6 @@ function cancelNote(uuid) {
         </div>
     </div>
 </div>
-<br>
 {% endif %}
 
 <script>
@@ -577,7 +571,7 @@ function toggleProjectDetailsEdit() {
 </script>
 
 <!-- Action Buttons -->
-<div class="d-grid gap-2 d-md-block">
+<div class="d-grid gap-2 d-md-block mb-4">
     <a class="btn btn-primary" href="{% url 'update_bid' bid.uuid %}">Update Bid</a>
     {% if perms.landscape.delete_bid %}
     <a class="btn btn-danger" href="{% url 'delete_bid' bid.uuid %}">Delete Bid</a>
@@ -587,5 +581,4 @@ function toggleProjectDetailsEdit() {
     {% endif %}
     <a class="btn btn-secondary" href="{% url 'bid_pipeline' %}">Back to Pipeline</a>
 </div>
-<br>
 {% endblock %}

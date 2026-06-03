@@ -2,101 +2,160 @@
 {% load humanize %}
 {% block content %}
 
-<h1>Dashboard</h1>
+<h4 class="mb-3">CLL Dashboard</h4>
 
-{%  include 'maintenance/status.html' %}
+<div class="row g-0">
 
-<br>
+  {# ── MAINTENANCE COLUMN ─────────────────────────────────────────── #}
+  {% if show_maintenance %}
+  <div class="{% if show_landscape %}col-lg-6 pe-lg-3 border-end{% else %}col-12{% endif %}">
+    <h5 class="text-primary mb-3">Maintenance</h5>
 
-<div class="row">
-	<div class="col-md-5">
-		<h5>NEWEST 5 CUSTOMERS:</h5>
-		<hr>
-		<div class="card card-body">
-			<div class="table-responsive">
-			<table class="table table-sm">
-				<tr>
-					<th>Customer Name</th>
-					<th>Phone</th>
-					<th>View</th>
-				</tr>
-                {% for customer in customers reversed %}
-				{% if forloop.counter <= 5 %}
-                <tr>
-                    <td>{{customer.name}}</td>
-                    <td>{{customer.phone1}}</td>
-					<td><a class="btn btn-sm btn-info" href="{% url 'customer' customer.uuid %}">View</a></td>                </tr>
-				{% endif %}
-                {% endfor %}
-			</table>
-			</div>
-		</div>
-	</div>
+    <div class="row g-2 mb-3">
+      <div class="col-6">
+        <div class="card text-center border-primary">
+          <div class="card-header bg-primary text-white py-1">Active Contracts</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ total_active_contracts }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card text-center border-warning">
+          <div class="card-header bg-warning text-dark py-1">Expiring in 60 Days</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ expire_list|length }}</h3>
+          </div>
+        </div>
+      </div>
+      {% if request.user.is_superuser %}
+      <div class="col-6">
+        <div class="card text-center border-primary">
+          <div class="card-header bg-primary text-white py-1">Active Contract Value</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">${{ total_contracts_value|floatformat:0|intcomma }}</h3>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      <div class="col-6">
+        <div class="card text-center border-secondary">
+          <div class="card-header bg-secondary text-white py-1">Visits This Month</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ visits_this_month }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
 
-	<div class="col-md-7">
-		<h5>NEWEST 5 CONTRACTS</h5>
-		<hr>
-		<div class="card card-body">
-			<div class="table-responsive">
-			<table class="table table-sm">
-				<tr>
-					<th>Site Name</th>
-					<th>Start Date</th>
-					<th>Visits</th>
-					{% if request.user.is_superuser %}<th>Price</th>{% endif %}
-					<th>View</th>
-					<th>Update</th>
-                    <!-- <th>Delete</th> -->
-				</tr>
-                {% for contract in contracts reversed %}
-				{% if forloop.counter <= 5 %}
-                    <tr>
-                        <td>{{contract.site_name}}</td>
-                        <td>{{contract.start_date|date:"F j, Y"}}</td>
-                        <td>{{contract.site_visits}}</td>
-                        {% if request.user.is_superuser %}<td>${{contract.price|floatformat:2|intcomma}}</td>{% endif %}
-						<td><a class="btn btn-info  btn-sm btn-block" href="{% url 'view_contract' contract.uuid %}">View</a></td>
-                        <td><a class="btn btn-primary  btn-sm btn-block" href="{% url 'update_contract' contract.uuid %}">Update</a></td>
-                        <!-- <td><a class="btn btn-danger  btn-sm btn-block" href="{% url 'delete_contract' contract.uuid %}">Delete</a></td> -->
-                    </tr>
-				{% endif %}
-                {% endfor %}
+    <h6 class="text-uppercase text-muted mb-1">Expiring Contracts (60 Days)</h6>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2 mb-3">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Site Name</th>
+              <th>Customer</th>
+              <th>End Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for contract in expire_list %}
+            <tr>
+              <td>{{ contract.site_name }}</td>
+              <td>{{ contract.site_customer }}</td>
+              <td>{{ contract.end_date|date:"M j, Y" }}</td>
+              <td><a class="btn btn-sm btn-outline-info py-0" href="{% url 'view_contract' contract.uuid %}">View</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-muted">No contracts expiring in the next 60 days.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-			</table>
-			</div>
-		</div>
-	</div>
+    <a class="btn btn-outline-primary btn-sm" href="{% url 'maintenance' %}">Go to Maintenance &rarr;</a>
+  </div>
+  {% endif %}
+
+  {# ── LANDSCAPE COLUMN ───────────────────────────────────────────── #}
+  {% if show_landscape %}
+  <div class="{% if show_maintenance %}col-lg-6 ps-lg-3 mt-4 mt-lg-0{% else %}col-12{% endif %}">
+    <h5 class="text-success mb-3">Landscape</h5>
+
+    <div class="row g-2 mb-3">
+      <div class="col-6">
+        <div class="card text-center border-success">
+          <div class="card-header bg-success text-white py-1">Bids in Pipeline</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ pipeline_count }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card text-center border-success">
+          <div class="card-header bg-success text-white py-1">Active Projects</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ active_project_count }}</h3>
+          </div>
+        </div>
+      </div>
+      {% if request.user.is_superuser %}
+      <div class="col-6">
+        <div class="card text-center border-success">
+          <div class="card-header bg-success text-white py-1">Pipeline Value</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">${{ pipeline_value|floatformat:0|intcomma }}</h3>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      <div class="col-6">
+        <div class="card text-center border-secondary">
+          <div class="card-header bg-secondary text-white py-1">Pending COs</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ pending_co_count }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h6 class="text-uppercase text-muted mb-1">Active Bids &amp; Projects</h6>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2 mb-3">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Phase</th>
+              <th>Estimator</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for bid in landscape_snapshot %}
+            <tr>
+              <td>{{ bid.project_name }}</td>
+              <td>{{ bid.get_phase_display }}</td>
+              <td>{{ bid.estimator|default:"—" }}</td>
+              <td><a class="btn btn-sm btn-outline-success py-0" href="{% url 'view_bid' bid.uuid %}">View</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-muted">No active bids or projects.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <a class="btn btn-outline-success btn-sm" href="{% url 'bid_pipeline' %}">Go to Landscape &rarr;</a>
+  </div>
+  {% endif %}
 
 </div>
-<br>
-<div class="row">
-	<div class="col-md-5">
-		<h5>EXPIRING WITHIN 60 DAYS</h5 >
-			<hr>
-		<div class="col">
-			<div class="card card-body">
-				<div class="table-responsive">
-				<table class="table table-sm">
-					<tr>
-						<th>Customer Name</th>
-						<th>Site Name</th>
-						<th>End Date</th>
-						<th>View</th>
-					</tr>
-					{% for list in expire_list %}
-					<tr>
-						<td>{{list.site_customer}}</td>
-						<td>{{list.site_name}}</td>
-						<td>{{list.end_date|date:"F j, Y"}}</td>
-						<td><a class="btn btn-sm btn-info" href="{% url 'view_contract' list.uuid %}">View</a></td>
-					</tr>
-					{% endfor %}
-				</table>
-				</div>
-				
-				<br>
-			</div>
-		</div>
-	</div>
-</div>			
+
 {% endblock %}

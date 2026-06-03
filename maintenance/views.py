@@ -8,7 +8,7 @@ from django.forms import inlineformset_factory
 from django.db.models import Sum, Count, F, ExpressionWrapper, FloatField
 from .models import *
 from visits.models import Visit, VisitType
-from landscape.models import Bid
+from landscape.models import Bid, ChangeOrder
 from .forms import ContractForm, CustomerForm, RegisterForm
 from .filters import ContractFilter, CustomerFilter
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -43,32 +43,47 @@ def loginPage(request):
 
 @login_required(login_url="/login")
 def home(request):
+    today = date.today()
     contracts = Contract.objects.all()
     customers = Customer.objects.all()
-    total_customers = customers.count()
-
-    active_contracts = contracts.filter(
-        end_date__gte=datetime.now())
-    total_active_contracts = active_contracts.count()
-
-    # total_contracts_value = Contract.objects.aggregate(Sum('price')) - This is an alt way to do the same as below but returns a tupol
-    # amounts = Contract.objects.values_list('price', flat=True)
-    # total_contracts_value = sum(amounts)
-
+    active_contracts = contracts.filter(end_date__gte=today)
+    expire_list = active_contracts.filter(end_date__lte=today + timedelta(days=60)).order_by('end_date')
     amounts = active_contracts.values_list('price', flat=True)
     total_contracts_value = sum(amounts)
+    visits_this_month = Visit.objects.filter(
+        visit_date__year=today.year,
+        visit_date__month=today.month,
+    ).count()
 
-    # expiring in the next 60 days
-    plus60 = date.today() + timedelta(days=60)
-    today = date.today()
-    expire_list = Contract.objects.filter(
-        end_date__range=[today, plus60])
+    pipeline_phases = ['estimating', 'submitted', 'on_hold']
+    project_phases = ['awarded', 'likely']
+    pipeline_bids = Bid.objects.filter(phase__in=pipeline_phases)
+    active_projects = Bid.objects.filter(phase__in=project_phases)
+    pipeline_value = Bid.objects.filter(
+        phase__in=pipeline_phases + project_phases
+    ).aggregate(total=Sum('amount'))['total'] or 0
+    pending_co_count = ChangeOrder.objects.filter(status='pending').count()
+    landscape_snapshot = Bid.objects.filter(
+        phase__in=pipeline_phases + project_phases
+    ).order_by('-created_at')[:5]
 
-    myFilter = ContractFilter()
-    context = {'contracts': contracts, 'customers': customers,
-               'total_customers': total_customers,
-               'total_contracts_value': total_contracts_value, 'expire_list': expire_list,
-               'myFilter': myFilter, 'active_contracts': active_contracts, 'total_active_contracts': total_active_contracts}
+    show_maintenance = request.user.is_superuser or request.user.groups.filter(name='Maintenance').exists()
+    show_landscape = request.user.is_superuser or request.user.groups.filter(name='Landscape').exists()
+
+    context = {
+        'total_customers': customers.count(),
+        'total_active_contracts': active_contracts.count(),
+        'total_contracts_value': total_contracts_value,
+        'expire_list': expire_list,
+        'visits_this_month': visits_this_month,
+        'pipeline_count': pipeline_bids.count(),
+        'active_project_count': active_projects.count(),
+        'pipeline_value': pipeline_value,
+        'pending_co_count': pending_co_count,
+        'landscape_snapshot': landscape_snapshot,
+        'show_maintenance': show_maintenance,
+        'show_landscape': show_landscape,
+    }
     return render(request, 'maintenance/dashboard.html', context)
 
 
