@@ -34,12 +34,12 @@
                             <th><a href="{% sort_url 'city' %}" class="text-decoration-none link-light">City {% if sort == 'city' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'state' %}" class="text-decoration-none link-light">State {% if sort == 'state' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'customer' %}" class="text-decoration-none link-light">Customer / GC {% if sort == 'customer' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
+                            <th class="text-center">Contract</th>
                             {% if request.user.is_superuser %}<th><a href="{% sort_url 'amount' %}" class="text-decoration-none link-light">Amount {% if sort == 'amount' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>{% endif %}
+                            {% if request.user.is_superuser %}<th>Approved COs</th>{% endif %}
                             <th><a href="{% sort_url 'phase' %}" class="text-decoration-none link-light">Phase {% if sort == 'phase' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'status' %}" class="text-decoration-none link-light">Status {% if sort == 'status' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
                             <th><a href="{% sort_url 'start_date' %}" class="text-decoration-none link-light">Start Date {% if sort == 'start_date' %}{% if order == 'asc' %}▲{% else %}▼{% endif %}{% endif %}</a></th>
-                            <th class="text-center">Contract</th>
-                            {% if request.user.is_superuser %}<th>Approved COs</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +49,15 @@
                             <td>{{project.city|default:"—"}}</td>
                             <td>{{project.state|default:"—"}}</td>
                             <td>{% if project.customer %}<a href="{% url 'customer' project.customer.uuid %}" class="text-decoration-none text-secondary">{{project.customer}}</a>{% else %}—{% endif %}</td>
+                            <td class="text-center">
+                                {% if project.contract_signed %}
+                                <span title="Contract signed">✅</span>
+                                {% else %}
+                                <span title="No contract">☐</span>
+                                {% endif %}
+                            </td>
                             {% if request.user.is_superuser %}<td>{% if project.amount %}${{project.amount|floatformat:2|intcomma}}{% else %}—{% endif %}</td>{% endif %}
+                            {% if request.user.is_superuser %}<td>{% if project.approved_co_total %}${{project.approved_co_total|floatformat:2|intcomma}}{% else %}—{% endif %}</td>{% endif %}
                             <td>
                                 {% if project.phase == 'awarded' %}<span class="badge bg-success">Awarded</span>
                                 {% elif project.phase == 'likely' %}<span class="badge bg-info text-dark">Likely</span>
@@ -64,14 +72,6 @@
                                 {% else %}—{% endif %}
                             </td>
                             <td>{{project.start_date|date:"F j, Y"|default:"—"}}</td>
-                            <td class="text-center">
-                                {% if project.contract_signed %}
-                                <span title="Contract signed">✅</span>
-                                {% else %}
-                                <span title="No contract">☐</span>
-                                {% endif %}
-                            </td>
-                            {% if request.user.is_superuser %}<td>{% if project.approved_co_total %}${{project.approved_co_total|floatformat:2|intcomma}}{% else %}—{% endif %}</td>{% endif %}
                         </tr>
                         {% empty %}
                         <tr><td colspan="10" class="text-center text-muted">No active projects.</td></tr>
