@@ -13,16 +13,17 @@
           <a class="nav-link" href="/home">Home</a>
         </li>
 
-        {% if perms.maintenance.view_customer %}
+        {% if perms.landscape.view_bid %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle nav-hover-label"
-             href="/customers/"
+             href="{% url 'landscape_dashboard' %}"
              data-bs-toggle="dropdown"
-             aria-expanded="false">Customer Center</a>
+             aria-expanded="false">Landscape</a>
           <ul class="dropdown-menu dropdown-menu-dark">
-            <li><a class="dropdown-item" href="/customers/">All Customers</a></li>
-            <li><a class="dropdown-item" href="/customers/?type=gc">GC Customers</a></li>
-            <li><a class="dropdown-item" href="/customers/?type=maintenance">Maintenance Customers</a></li>
+            <li><a class="dropdown-item" href="{% url 'landscape_dashboard' %}">Dashboard</a></li>
+            <li><a class="dropdown-item" href="{% url 'active_projects' %}">Active Projects</a></li>
+            <li><a class="dropdown-item" href="{% url 'bid_pipeline' %}">Bid Pipeline</a></li>
+            <li><a class="dropdown-item" href="{% url 'completed_projects' %}">Completed Projects</a></li>
           </ul>
         </li>
         {% endif %}
@@ -43,17 +44,16 @@
         </li>
         {% endif %}
 
-        {% if perms.landscape.view_bid %}
+        {% if perms.maintenance.view_customer %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle nav-hover-label"
-             href="{% url 'landscape_dashboard' %}"
+             href="/customers/"
              data-bs-toggle="dropdown"
-             aria-expanded="false">Landscape</a>
+             aria-expanded="false">Customers</a>
           <ul class="dropdown-menu dropdown-menu-dark">
-            <li><a class="dropdown-item" href="{% url 'landscape_dashboard' %}">Dashboard</a></li>
-            <li><a class="dropdown-item" href="{% url 'active_projects' %}">Active Projects</a></li>
-            <li><a class="dropdown-item" href="{% url 'bid_pipeline' %}">Bid Pipeline</a></li>
-            <li><a class="dropdown-item" href="{% url 'completed_projects' %}">Completed Projects</a></li>
+            <li><a class="dropdown-item" href="/customers/">All Customers</a></li>
+            <li><a class="dropdown-item" href="/customers/?type=gc">GC Customers</a></li>
+            <li><a class="dropdown-item" href="/customers/?type=maintenance">Maintenance Customers</a></li>
           </ul>
         </li>
         {% endif %}

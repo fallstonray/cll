@@ -2,89 +2,14 @@
 {% load humanize %}
 {% block content %}
 
-<h4 class="mb-3">CLL Dashboard</h4>
+<h4 class="mb-3">Operations Command Center</h4>
 
 <div class="row g-0">
 
-  {# ── MAINTENANCE COLUMN ─────────────────────────────────────────── #}
-  {% if show_maintenance %}
-  <div class="{% if show_landscape %}col-lg-6 pe-lg-3 border-end{% else %}col-12{% endif %}">
-    <h5 class="text-primary mb-3">Maintenance</h5>
-
-    <div class="row g-2 mb-3">
-      <div class="col-6">
-        <div class="card text-center border-primary">
-          <div class="card-header bg-primary text-white py-1">Active Contracts</div>
-          <div class="card-body py-2">
-            <h3 class="mb-0">{{ total_active_contracts }}</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="card text-center border-warning">
-          <div class="card-header bg-warning text-dark py-1">Expiring in 60 Days</div>
-          <div class="card-body py-2">
-            <h3 class="mb-0">{{ expire_list|length }}</h3>
-          </div>
-        </div>
-      </div>
-      {% if request.user.is_superuser %}
-      <div class="col-6">
-        <div class="card text-center border-primary">
-          <div class="card-header bg-primary text-white py-1">Active Contract Value</div>
-          <div class="card-body py-2">
-            <h3 class="mb-0">${{ total_contracts_value|floatformat:0|intcomma }}</h3>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      <div class="col-6">
-        <div class="card text-center border-secondary">
-          <div class="card-header bg-secondary text-white py-1">Visits This Month</div>
-          <div class="card-body py-2">
-            <h3 class="mb-0">{{ visits_this_month }}</h3>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <h6 class="text-uppercase text-muted mb-1">Expiring Contracts (60 Days)</h6>
-    <hr class="mt-0 mb-2">
-    <div class="card card-body p-2 mb-3">
-      <div class="table-responsive">
-        <table class="table table-sm mb-0">
-          <thead>
-            <tr>
-              <th>Site Name</th>
-              <th>Customer</th>
-              <th>End Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for contract in expire_list %}
-            <tr>
-              <td>{{ contract.site_name }}</td>
-              <td>{{ contract.site_customer }}</td>
-              <td>{{ contract.end_date|date:"M j, Y" }}</td>
-              <td><a class="btn btn-sm btn-outline-info py-0" href="{% url 'view_contract' contract.uuid %}">View</a></td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="4" class="text-muted">No contracts expiring in the next 60 days.</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <a class="btn btn-outline-primary btn-sm" href="{% url 'maintenance_dashboard' %}">Go to Maintenance &rarr;</a>
-  </div>
-  {% endif %}
-
   {# ── LANDSCAPE COLUMN ───────────────────────────────────────────── #}
   {% if show_landscape %}
-  <div class="{% if show_maintenance %}col-lg-6 ps-lg-3 mt-4 mt-lg-0{% else %}col-12{% endif %}">
-    <h5 class="text-success mb-3">Landscape</h5>
+  <div class="{% if show_maintenance %}col-lg-6 pe-lg-3 border-end{% else %}col-12{% endif %}">
+    <h5 class="mb-3"><a href="{% url 'landscape_dashboard' %}" class="text-decoration-none text-success">Landscape</a></h5>
 
     <div class="row g-2 mb-3">
       <div class="col-6">
@@ -153,6 +78,81 @@
     </div>
 
     <a class="btn btn-outline-success btn-sm" href="{% url 'landscape_dashboard' %}">Go to Landscape &rarr;</a>
+  </div>
+  {% endif %}
+
+  {# ── MAINTENANCE COLUMN ─────────────────────────────────────────── #}
+  {% if show_maintenance %}
+  <div class="{% if show_landscape %}col-lg-6 ps-lg-3 mt-4 mt-lg-0{% else %}col-12{% endif %}">
+    <h5 class="mb-3"><a href="{% url 'maintenance_dashboard' %}" class="text-decoration-none text-primary">Maintenance</a></h5>
+
+    <div class="row g-2 mb-3">
+      <div class="col-6">
+        <div class="card text-center border-primary">
+          <div class="card-header bg-primary text-white py-1">Active Contracts</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ total_active_contracts }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card text-center border-warning">
+          <div class="card-header bg-warning text-dark py-1">Expiring in 60 Days</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ expire_list|length }}</h3>
+          </div>
+        </div>
+      </div>
+      {% if request.user.is_superuser %}
+      <div class="col-6">
+        <div class="card text-center border-primary">
+          <div class="card-header bg-primary text-white py-1">Active Contract Value</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">${{ total_contracts_value|floatformat:0|intcomma }}</h3>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      <div class="col-6">
+        <div class="card text-center border-secondary">
+          <div class="card-header bg-secondary text-white py-1">Visits This Month</div>
+          <div class="card-body py-2">
+            <h3 class="mb-0">{{ visits_this_month }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h6 class="text-uppercase text-muted mb-1">Expiring Contracts (60 Days)</h6>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2 mb-3">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Site Name</th>
+              <th>Customer</th>
+              <th>End Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for contract in expire_list %}
+            <tr>
+              <td>{{ contract.site_name }}</td>
+              <td>{{ contract.site_customer }}</td>
+              <td>{{ contract.end_date|date:"M j, Y" }}</td>
+              <td><a class="btn btn-sm btn-outline-info py-0" href="{% url 'view_contract' contract.uuid %}">View</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-muted">No contracts expiring in the next 60 days.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <a class="btn btn-outline-primary btn-sm" href="{% url 'maintenance_dashboard' %}">Go to Maintenance &rarr;</a>
   </div>
   {% endif %}
 

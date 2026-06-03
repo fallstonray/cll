@@ -39,6 +39,12 @@
         </div>
     </div>
     <br>
+    {% if service_label %}
+    <div class="alert alert-info d-flex justify-content-between align-items-center py-2">
+        <span>Filtered by service: <strong>{{ service_label }}</strong></span>
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'maintenance' %}">✕ Clear Filter</a>
+    </div>
+    {% endif %}
     <div class="card card-body">
         <div class="table-responsive">
         <table class="table table-sm table-striped table-hover">

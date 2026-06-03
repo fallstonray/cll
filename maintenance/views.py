@@ -225,14 +225,14 @@ def maintenanceDashboard(request):
         'visit_contract', 'crew_leader', 'visit_type_name'
     ).order_by('-visit_date', '-created_at')[:5]
 
-    service_mix = {
-        'Irrigation':        active_contracts.filter(irrigation=True).count(),
-        'Turf Applications': active_contracts.filter(turf_apps=True).count(),
-        'Aeration/Overseed': active_contracts.filter(aeration_overseed=True).count(),
-        'Spring Flowers':    active_contracts.filter(flowers_spring__gt=0).count(),
-        'Fall Flowers':      active_contracts.filter(flowers_fall__gt=0).count(),
-        'Mulch':             active_contracts.filter(mulch_yd__gt=0).count(),
-    }
+    service_mix = [
+        ('Irrigation',        'irrigation',     active_contracts.filter(irrigation=True).count()),
+        ('Turf Applications', 'turf_apps',      active_contracts.filter(turf_apps=True).count()),
+        ('Aeration/Overseed', 'aeration',       active_contracts.filter(aeration_overseed=True).count()),
+        ('Spring Flowers',    'spring_flowers', active_contracts.filter(flowers_spring__gt=0).count()),
+        ('Fall Flowers',      'fall_flowers',   active_contracts.filter(flowers_fall__gt=0).count()),
+        ('Mulch',             'mulch',          active_contracts.filter(mulch_yd__gt=0).count()),
+    ]
 
     top_customers = (
         active_contracts.filter(site_customer__isnull=False)
@@ -275,6 +275,15 @@ def maintenance(request):
     myFilter = ContractFilter(request.GET, queryset=all_contracts)
     contracts = myFilter.qs
 
+    SERVICE_FILTERS = {
+        'irrigation':     ('Irrigation',        {'irrigation': True}),
+        'turf_apps':      ('Turf Applications', {'turf_apps': True}),
+        'aeration':       ('Aeration/Overseed', {'aeration_overseed': True}),
+        'spring_flowers': ('Spring Flowers',    {'flowers_spring__gt': 0}),
+        'fall_flowers':   ('Fall Flowers',      {'flowers_fall__gt': 0}),
+        'mulch':          ('Mulch',             {'mulch_yd__gt': 0}),
+    }
+
     sort_fields = {
         'customer':  'site_customer__name',
         'site_name': 'site_name',
@@ -283,9 +292,13 @@ def maintenance(request):
     order = request.GET.get('order', 'asc')
     field = sort_fields.get(sort, 'site_name')
 
-    active_contracts = contracts.filter(end_date__gte=datetime.now()).order_by(
-        f'-{field}' if order == 'desc' else field
-    )
+    service_key = request.GET.get('service')
+    service_label = None
+    active_contracts = contracts.filter(end_date__gte=datetime.now())
+    if service_key in SERVICE_FILTERS:
+        service_label, service_q = SERVICE_FILTERS[service_key]
+        active_contracts = active_contracts.filter(**service_q)
+    active_contracts = active_contracts.order_by(f'-{field}' if order == 'desc' else field)
     total_active_contracts = active_contracts.count()
 
     if request.GET.get('export') == 'csv':
@@ -314,7 +327,8 @@ def maintenance(request):
     context = {'all_contracts': all_contracts, 'active_contracts': active_contracts,
                'contracts_count': contracts_count, 'myFilter': myFilter,
                'total_active_contracts': total_active_contracts,
-               'sort': sort, 'order': order}
+               'sort': sort, 'order': order,
+               'service_label': service_label, 'service_key': service_key}
 
     return render(request, 'maintenance/maintenance.html', context)
 

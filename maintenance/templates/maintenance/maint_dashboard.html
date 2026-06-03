@@ -150,9 +150,9 @@
             </tr>
           </thead>
           <tbody>
-            {% for service, count in service_mix.items %}
+            {% for name, key, count in service_mix %}
             <tr>
-              <td>{{ service }}</td>
+              <td><a href="{% url 'maintenance' %}?service={{ key }}" class="text-decoration-none">{{ name }}</a></td>
               <td>{{ count }}</td>
               <td>
                 {% if active_count %}
