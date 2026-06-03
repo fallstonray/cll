@@ -201,6 +201,73 @@ def updateCustomer(request, uuid):
 
 @ login_required(login_url="/login")
 @ permission_required("maintenance.view_contract", raise_exception=True)
+def maintenanceDashboard(request):
+    today = date.today()
+
+    all_contracts = Contract.objects.all()
+    active_contracts = all_contracts.filter(end_date__gte=today)
+    expire_list = active_contracts.filter(end_date__lte=today + timedelta(days=60)).order_by('end_date')
+    active_count = active_contracts.count()
+
+    active_contract_value = active_contracts.aggregate(total=Sum('price'))['total'] or 0
+    avg_contract_value = (active_contract_value / active_count) if active_count else 0
+
+    visits_this_month = Visit.objects.filter(
+        visit_date__year=today.year, visit_date__month=today.month
+    ).count()
+    visits_this_year = Visit.objects.filter(visit_date__year=today.year).count()
+    man_hours_this_year = (
+        Visit.objects.filter(visit_date__year=today.year)
+        .aggregate(total=Sum('total_man_hours'))['total'] or 0
+    )
+
+    recent_visits = Visit.objects.select_related(
+        'visit_contract', 'crew_leader', 'visit_type_name'
+    ).order_by('-visit_date', '-created_at')[:5]
+
+    service_mix = {
+        'Irrigation':        active_contracts.filter(irrigation=True).count(),
+        'Turf Applications': active_contracts.filter(turf_apps=True).count(),
+        'Aeration/Overseed': active_contracts.filter(aeration_overseed=True).count(),
+        'Spring Flowers':    active_contracts.filter(flowers_spring__gt=0).count(),
+        'Fall Flowers':      active_contracts.filter(flowers_fall__gt=0).count(),
+        'Mulch':             active_contracts.filter(mulch_yd__gt=0).count(),
+    }
+
+    top_customers = (
+        active_contracts.filter(site_customer__isnull=False)
+        .values('site_customer__uuid', 'site_customer__name')
+        .annotate(contract_count=Count('id'), total_value=Sum('price'))
+        .order_by('-contract_count')[:5]
+    )
+
+    by_salesrep = (
+        active_contracts.filter(salesrep__isnull=False)
+        .values('salesrep__salesman')
+        .annotate(contract_count=Count('id'), total_value=Sum('price'))
+        .order_by('-contract_count')
+    )
+
+    context = {
+        'active_count': active_count,
+        'expire_count': expire_list.count(),
+        'expire_list': expire_list,
+        'total_customers': Customer.objects.count(),
+        'visits_this_month': visits_this_month,
+        'active_contract_value': active_contract_value,
+        'avg_contract_value': avg_contract_value,
+        'visits_this_year': visits_this_year,
+        'man_hours_this_year': man_hours_this_year,
+        'recent_visits': recent_visits,
+        'service_mix': service_mix,
+        'top_customers': top_customers,
+        'by_salesrep': by_salesrep,
+    }
+    return render(request, 'maintenance/maint_dashboard.html', context)
+
+
+@ login_required(login_url="/login")
+@ permission_required("maintenance.view_contract", raise_exception=True)
 def maintenance(request):
     all_contracts = Contract.objects.all()
     contracts_count = all_contracts.count()

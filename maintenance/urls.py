@@ -16,7 +16,8 @@ urlpatterns = [
     path('update_customer/<uuid:uuid>/',
          views.updateCustomer, name="update_customer"),
 
-    path('maintenance/', views.maintenance, name="maintenance"),
+    path('maintenance/',           views.maintenanceDashboard, name="maintenance_dashboard"),
+    path('maintenance/contracts/', views.maintenance,          name="maintenance"),
 
     path('create_contract/<uuid:uuid>/',
          views.createContract, name="create_contract"),

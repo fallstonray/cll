@@ -30,13 +30,14 @@
         {% if perms.maintenance.view_contract %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle nav-hover-label"
-             href="{% url 'maintenance' %}"
+             href="{% url 'maintenance_dashboard' %}"
              data-bs-toggle="dropdown"
              aria-expanded="false">Maintenance</a>
           <ul class="dropdown-menu dropdown-menu-dark">
-            <li><a class="dropdown-item" href="{% url 'maintenance' %}">View Contracts</a></li>
+            <li><a class="dropdown-item" href="{% url 'maintenance_dashboard' %}">Dashboard</a></li>
+            <li><a class="dropdown-item" href="{% url 'maintenance' %}">Contracts</a></li>
             {% if perms.visits.view_visit %}
-            <li><a class="dropdown-item" href="/visits/">Visits</a></li>
+            <li><a class="dropdown-item" href="{% url 'visits' %}">Visits</a></li>
             {% endif %}
           </ul>
         </li>

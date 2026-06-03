@@ -40,7 +40,7 @@
     <br>
     <div class="card card-body">
         <div class="table-responsive">
-        <table class="table table-sm table-hover">
+        <table class="table table-sm table-striped table-hover">
             <thead class="table-dark">
                 <tr>
                     <th>Customer</th>
@@ -56,7 +56,7 @@
             <tbody>
                 {% for contract in active_contracts %}
                 <tr>
-                    <td>{{contract.site_customer}}</td>
+                    <td><a href="{% url 'customer' contract.site_customer.uuid %}" class="text-decoration-none">{{contract.site_customer}}</a></td>
                     <td><a href="{% url 'view_contract' contract.uuid %}" class="text-decoration-none fw-semibold">{{contract.site_name}}</a></td>
                     <td>{{contract.location}}</td>
                     <td>{{contract.start_date|date:"F j, Y"}}</td>

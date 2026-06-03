@@ -1,0 +1,244 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+  <h4 class="mb-0">Maintenance Dashboard</h4>
+  {% if perms.maintenance.add_contract %}
+  <a class="btn btn-sm btn-primary" href="{% url 'customers' %}">+ New Contract</a>
+  {% endif %}
+</div>
+
+{# ── KPI Row 1 ─────────────────────────────────────────────────────────────── #}
+<div class="row g-2 mb-2">
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-primary h-100">
+      <div class="card-header bg-primary text-white py-1 small">Active Contracts</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ active_count }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-warning h-100">
+      <div class="card-header bg-warning text-dark py-1 small">Expiring in 60 Days</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ expire_count }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-secondary h-100">
+      <div class="card-header bg-secondary text-white py-1 small">Total Customers</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ total_customers }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-info h-100">
+      <div class="card-header bg-info text-white py-1 small">Visits This Month</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ visits_this_month }}</h3></div>
+    </div>
+  </div>
+</div>
+
+{# ── KPI Row 2 (superuser only) ────────────────────────────────────────────── #}
+{% if request.user.is_superuser %}
+<div class="row g-2 mb-3">
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-primary h-100">
+      <div class="card-header bg-primary text-white py-1 small">Active Contract Value</div>
+      <div class="card-body py-2"><h3 class="mb-0">${{ active_contract_value|floatformat:0|intcomma }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-primary h-100">
+      <div class="card-header bg-primary text-white py-1 small">Avg Contract Value</div>
+      <div class="card-body py-2"><h3 class="mb-0">${{ avg_contract_value|floatformat:0|intcomma }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-info h-100">
+      <div class="card-header bg-info text-white py-1 small">Visits This Year</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ visits_this_year }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-secondary h-100">
+      <div class="card-header bg-secondary text-white py-1 small">Man Hours This Year</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ man_hours_this_year|floatformat:0|intcomma }}</h3></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{# ── Expiring Contracts ────────────────────────────────────────────────────── #}
+<h6 class="text-uppercase text-muted mb-1">Expiring Contracts (60 Days)</h6>
+<hr class="mt-0 mb-2">
+<div class="card card-body p-2 mb-3">
+  <div class="table-responsive">
+    <table class="table table-sm mb-0">
+      <thead>
+        <tr>
+          <th>Site Name</th>
+          <th>Customer</th>
+          <th>End Date</th>
+          {% if request.user.is_superuser %}<th>Price</th>{% endif %}
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for contract in expire_list %}
+        <tr>
+          <td><a href="{% url 'view_contract' contract.uuid %}" class="text-decoration-none fw-semibold">{{ contract.site_name }}</a></td>
+          <td><a href="{% url 'customer' contract.site_customer.uuid %}" class="text-decoration-none">{{ contract.site_customer }}</a></td>
+          <td>{{ contract.end_date|date:"M j, Y" }}</td>
+          {% if request.user.is_superuser %}<td>${{ contract.price|floatformat:0|intcomma }}</td>{% endif %}
+          <td><a class="btn btn-sm btn-outline-primary py-0" href="{% url 'view_contract' contract.uuid %}">View</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-success">No contracts expiring in the next 60 days.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# ── Recent Visits & Service Mix ───────────────────────────────────────────── #}
+<div class="row mb-3">
+
+  <div class="col-lg-6 mb-3 mb-lg-0">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <h6 class="text-uppercase text-muted mb-0">Recent Visits</h6>
+      <a class="btn btn-outline-primary btn-sm py-0" href="{% url 'visits' %}">See All &rarr;</a>
+    </div>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Site</th>
+              <th>Date</th>
+              <th>Crew Leader</th>
+              <th>Hours</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for visit in recent_visits %}
+            <tr>
+              <td><a href="{% url 'view_visit' visit.uuid %}" class="text-decoration-none">{{ visit.visit_contract }}</a></td>
+              <td>{{ visit.visit_date|date:"M j, Y" }}</td>
+              <td>{{ visit.crew_leader|default:"—" }}</td>
+              <td>{{ visit.total_man_hours }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-muted">No visits recorded.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <h6 class="text-uppercase text-muted mb-1">Service Mix (Active Contracts)</h6>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Contracts</th>
+              <th>% of Active</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for service, count in service_mix.items %}
+            <tr>
+              <td>{{ service }}</td>
+              <td>{{ count }}</td>
+              <td>
+                {% if active_count %}
+                <div class="d-flex align-items-center gap-2">
+                  <div class="progress flex-grow-1" style="height:14px;">
+                    <div class="progress-bar bg-primary" style="width:{% widthratio count active_count 100 %}%"></div>
+                  </div>
+                  <small>{% widthratio count active_count 100 %}%</small>
+                </div>
+                {% else %}—{% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{# ── Top Customers & By Sales Rep ──────────────────────────────────────────── #}
+<div class="row mb-4">
+
+  <div class="col-lg-6 mb-3 mb-lg-0">
+    <h6 class="text-uppercase text-muted mb-1">Top Customers</h6>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Contracts</th>
+              {% if request.user.is_superuser %}<th>Total Value</th>{% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in top_customers %}
+            <tr>
+              <td><a href="{% url 'customer' c.site_customer__uuid %}" class="text-decoration-none">{{ c.site_customer__name }}</a></td>
+              <td>{{ c.contract_count }}</td>
+              {% if request.user.is_superuser %}
+              <td>{% if c.total_value %}${{ c.total_value|floatformat:0|intcomma }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+              {% endif %}
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-muted">No customer data.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <h6 class="text-uppercase text-muted mb-1">Contracts by Sales Rep</h6>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Sales Rep</th>
+              <th>Contracts</th>
+              {% if request.user.is_superuser %}<th>Total Value</th>{% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in by_salesrep %}
+            <tr>
+              <td>{{ r.salesrep__salesman }}</td>
+              <td>{{ r.contract_count }}</td>
+              {% if request.user.is_superuser %}
+              <td>{% if r.total_value %}${{ r.total_value|floatformat:0|intcomma }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+              {% endif %}
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-muted">No sales rep data.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
