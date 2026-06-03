@@ -79,6 +79,8 @@
 			<table class="table table-sm table-hover">
 				<tr>
 					<th>Project Name</th>
+					<th>City</th>
+					<th>State</th>
 					<th>Phase</th>
 					<th>Status</th>
 					<th>Amount</th>
@@ -88,6 +90,8 @@
 				{% for bid in current_work %}
 				<tr style="cursor:pointer;" onclick="window.location='{% url 'view_bid' bid.uuid %}'">
 					<td>{{bid.project_name}}</td>
+					<td>{{bid.city|default:"—"}}</td>
+					<td>{{bid.state|default:"—"}}</td>
 					<td>
 						{% if bid.phase == 'awarded' %}
 							<span class="badge bg-success">Awarded</span>
@@ -126,6 +130,8 @@
 			<table class="table table-sm table-hover">
 				<tr>
 					<th>Project Name</th>
+					<th>City</th>
+					<th>State</th>
 					<th>Status</th>
 					<th>Amount</th>
 					<th>Start Date</th>
@@ -136,6 +142,8 @@
 				{% for bid in completed_work %}
 				<tr style="cursor:pointer;" onclick="window.location='{% url 'view_bid' bid.uuid %}'">
 					<td>{{bid.project_name}}</td>
+					<td>{{bid.city|default:"—"}}</td>
+					<td>{{bid.state|default:"—"}}</td>
 					<td>
 						{% if bid.status == 'in_progress' %}<span class="badge bg-primary">In Progress</span>
 						{% elif bid.status == 'scheduled' %}<span class="badge bg-info text-dark">Scheduled</span>

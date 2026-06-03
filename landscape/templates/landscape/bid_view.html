@@ -41,8 +41,7 @@
                     {% if request.user.is_superuser %}<strong>Amount:</strong> {% if bid.amount %}${{bid.amount|floatformat:2|intcomma}}{% else %}—{% endif %}<br>{% endif %}
                     <strong>Estimator:</strong> {{bid.estimator|default:"—"}}<br>
                     <strong>Bid Submitted:</strong> {{bid.bid_submitted|date:"F j, Y"|default:"—"}}<br>
-                    <strong>Contract Signed:</strong> {% if bid.contract_signed %}Yes{% else %}No{% endif %}<br>
-                    <strong>Date Entered:</strong> {{bid.created_at|date:"F j, Y"}}<br>
+                    <strong>Contract Signed:</strong> {% if bid.contract_signed %}Yes{% else %}No{% endif %}
                 </p>
             </div>
             {% if perms.landscape.change_bid %}
