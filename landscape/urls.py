@@ -3,7 +3,8 @@ from . import views
 
 urlpatterns = [
     # Landscape list views
-    path('landscape/',           views.bidPipeline,       name='bid_pipeline'),
+    path('landscape/',           views.landscapeDashboard, name='landscape_dashboard'),
+    path('landscape/pipeline/',  views.bidPipeline,        name='bid_pipeline'),
     path('landscape/projects/',  views.activeProjects,    name='active_projects'),
     path('landscape/completed/', views.completedProjects, name='completed_projects'),
 

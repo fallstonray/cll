@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from datetime import date, timedelta
+from django.db.models import Count, Sum
 from .models import Bid, ChangeOrder, DailyLogEntry, BidDocument
 from .forms import BidForm, BidUpdateForm, ChangeOrderForm, DailyLogEntryForm, BidDocumentForm
 from .filters import BidFilter
@@ -67,6 +68,68 @@ COMPLETED_SORT_FIELDS = {
     'amount':       'amount',
     'end_date':     'end_date',
 }
+
+
+@login_required(login_url="/login")
+@permission_required('landscape.view_bid', raise_exception=True)
+def landscapeDashboard(request):
+    today = date.today()
+
+    active_projects_qs = Bid.objects.filter(phase__in=['awarded', 'likely']).exclude(status='completed')
+    pipeline_qs = Bid.objects.filter(phase__in=['estimating', 'submitted', 'on_hold'])
+    pending_cos_qs = ChangeOrder.objects.filter(status='pending')
+
+    phase_counts = dict(
+        Bid.objects.values_list('phase').annotate(n=Count('id'))
+    )
+
+    completed_qs = Bid.objects.filter(status='completed')
+    warranties_expiring = sum(
+        1 for b in completed_qs if b.end_date and 0 <= b.warranty_days_left <= 60
+    )
+
+    active_project_value = active_projects_qs.aggregate(total=Sum('amount'))['total'] or 0
+    pipeline_value = pipeline_qs.aggregate(total=Sum('amount'))['total'] or 0
+    pending_co_value = pending_cos_qs.aggregate(total=Sum('amount'))['total'] or 0
+    completed_this_year = Bid.objects.filter(status='completed', end_date__year=today.year).count()
+
+    active_projects = active_projects_qs.order_by('start_date')[:5]
+    overdue_followups = Bid.objects.filter(
+        next_follow_up__isnull=False,
+        next_follow_up__lte=today,
+    ).exclude(phase__in=['lost', 'dead']).exclude(status='completed').order_by('next_follow_up')[:5]
+    pending_cos = pending_cos_qs.select_related('bid').order_by('date_submitted')[:10]
+
+    top_customers = (
+        Bid.objects.filter(customer__isnull=False)
+        .values('customer__uuid', 'customer__name')
+        .annotate(bid_count=Count('id'), total_value=Sum('amount'))
+        .order_by('-bid_count')[:5]
+    )
+    top_states = (
+        Bid.objects.filter(state__isnull=False, state__gt='')
+        .values('state')
+        .annotate(bid_count=Count('id'), total_value=Sum('amount'))
+        .order_by('-bid_count')[:5]
+    )
+
+    context = {
+        'phase_counts': phase_counts,
+        'active_project_count': active_projects_qs.count(),
+        'pipeline_count': pipeline_qs.count(),
+        'pending_co_count': pending_cos_qs.count(),
+        'warranties_expiring': warranties_expiring,
+        'active_project_value': active_project_value,
+        'pipeline_value': pipeline_value,
+        'pending_co_value': pending_co_value,
+        'completed_this_year': completed_this_year,
+        'active_projects': active_projects,
+        'overdue_followups': overdue_followups,
+        'pending_cos': pending_cos,
+        'top_customers': top_customers,
+        'top_states': top_states,
+    }
+    return render(request, 'landscape/dashboard.html', context)
 
 
 @login_required(login_url="/login")

@@ -1,0 +1,290 @@
+{% extends 'maintenance/main.html' %}
+{% load humanize %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+  <h4 class="mb-0">Landscape Dashboard</h4>
+  {% if perms.landscape.add_bid %}
+  <a class="btn btn-sm btn-success" href="{% url 'create_bid' %}">+ New Bid</a>
+  {% endif %}
+</div>
+
+{# ── KPI Row 1 ─────────────────────────────────────────────────────────────── #}
+<div class="row g-2 mb-2">
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-success h-100">
+      <div class="card-header bg-success text-white py-1 small">Active Projects</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ active_project_count }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-primary h-100">
+      <div class="card-header bg-primary text-white py-1 small">Bids in Pipeline</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ pipeline_count }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-warning h-100">
+      <div class="card-header bg-warning text-dark py-1 small">Pending Change Orders</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ pending_co_count }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-danger h-100">
+      <div class="card-header bg-danger text-white py-1 small">Warranties Expiring 60d</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ warranties_expiring }}</h3></div>
+    </div>
+  </div>
+</div>
+
+{# ── KPI Row 2 (superuser only) ────────────────────────────────────────────── #}
+{% if request.user.is_superuser %}
+<div class="row g-2 mb-3">
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-success h-100">
+      <div class="card-header bg-success text-white py-1 small">Active Project Value</div>
+      <div class="card-body py-2"><h3 class="mb-0">${{ active_project_value|floatformat:0|intcomma }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-primary h-100">
+      <div class="card-header bg-primary text-white py-1 small">Pipeline Value</div>
+      <div class="card-body py-2"><h3 class="mb-0">${{ pipeline_value|floatformat:0|intcomma }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-warning h-100">
+      <div class="card-header bg-warning text-dark py-1 small">Pending CO Value</div>
+      <div class="card-body py-2"><h3 class="mb-0">${{ pending_co_value|floatformat:0|intcomma }}</h3></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center border-secondary h-100">
+      <div class="card-header bg-secondary text-white py-1 small">Completed This Year</div>
+      <div class="card-body py-2"><h3 class="mb-0">{{ completed_this_year }}</h3></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{# ── Bid Funnel ────────────────────────────────────────────────────────────── #}
+<h6 class="text-uppercase text-muted mb-1">Bid Funnel</h6>
+<hr class="mt-0 mb-2">
+<div class="card card-body p-3 mb-3">
+  <div class="d-flex flex-wrap gap-4 justify-content-around align-items-center">
+    <div class="text-center">
+      <div class="mb-1"><span class="badge bg-secondary px-3 py-2 fs-6">{{ phase_counts.estimating|default:"0" }}</span></div>
+      <small class="text-muted">Estimating</small>
+    </div>
+    <div class="text-center">
+      <div class="mb-1"><span class="badge bg-primary px-3 py-2 fs-6">{{ phase_counts.submitted|default:"0" }}</span></div>
+      <small class="text-muted">Submitted</small>
+    </div>
+    <div class="text-center">
+      <div class="mb-1"><span class="badge bg-warning text-dark px-3 py-2 fs-6">{{ phase_counts.on_hold|default:"0" }}</span></div>
+      <small class="text-muted">On Hold</small>
+    </div>
+    <div class="text-center">
+      <div class="mb-1"><span class="badge bg-info px-3 py-2 fs-6">{{ phase_counts.likely|default:"0" }}</span></div>
+      <small class="text-muted">Likely</small>
+    </div>
+    <div class="text-center">
+      <div class="mb-1"><span class="badge bg-success px-3 py-2 fs-6">{{ phase_counts.awarded|default:"0" }}</span></div>
+      <small class="text-muted">Awarded</small>
+    </div>
+    <div class="vr d-none d-sm-block"></div>
+    <div class="text-center">
+      <div class="mb-1"><span class="badge bg-danger px-3 py-2 fs-6">{{ phase_counts.lost|default:"0" }}</span></div>
+      <small class="text-muted">Lost</small>
+    </div>
+    <div class="text-center">
+      <div class="mb-1"><span class="badge bg-dark px-3 py-2 fs-6">{{ phase_counts.dead|default:"0" }}</span></div>
+      <small class="text-muted">Dead</small>
+    </div>
+  </div>
+</div>
+
+{# ── Active Projects & Follow-Up Needed ────────────────────────────────────── #}
+<div class="row mb-3">
+
+  <div class="col-lg-6 mb-3 mb-lg-0">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <h6 class="text-uppercase text-muted mb-0">Active Projects</h6>
+      <a class="btn btn-outline-success btn-sm py-0" href="{% url 'active_projects' %}">See All &rarr;</a>
+    </div>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Status</th>
+              {% if request.user.is_superuser %}<th>Amount</th>{% endif %}
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in active_projects %}
+            <tr>
+              <td>{{ p.project_name }}</td>
+              <td>
+                {% if p.status == 'in_progress' %}<span class="badge bg-primary">In Progress</span>
+                {% elif p.status == 'scheduled' %}<span class="badge bg-info">Scheduled</span>
+                {% elif p.status == 'paused' %}<span class="badge bg-warning text-dark">Paused</span>
+                {% elif p.status == 'delayed' %}<span class="badge bg-danger">Delayed</span>
+                {% elif p.status == 'waiting' %}<span class="badge bg-secondary">Waiting</span>
+                {% else %}<span class="text-muted">—</span>{% endif %}
+              </td>
+              {% if request.user.is_superuser %}
+              <td>{% if p.amount %}${{ p.amount|floatformat:0|intcomma }}{% else %}—{% endif %}</td>
+              {% endif %}
+              <td><a class="btn btn-sm btn-outline-success py-0" href="{% url 'view_bid' p.uuid %}">View</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-muted">No active projects.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <h6 class="text-uppercase text-muted mb-0">Follow-Up Needed</h6>
+      <a class="btn btn-outline-primary btn-sm py-0" href="{% url 'bid_pipeline' %}">See All &rarr;</a>
+    </div>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Follow-Up Date</th>
+              <th>Phase</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for bid in overdue_followups %}
+            <tr>
+              <td>{{ bid.project_name }}</td>
+              <td class="text-danger fw-semibold">{{ bid.next_follow_up|date:"M j, Y" }}</td>
+              <td>{{ bid.get_phase_display }}</td>
+              <td><a class="btn btn-sm btn-outline-primary py-0" href="{% url 'view_bid' bid.uuid %}">View</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-success">No overdue follow-ups.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{# ── Pending Change Orders ──────────────────────────────────────────────────── #}
+<h6 class="text-uppercase text-muted mb-1">Pending Change Orders</h6>
+<hr class="mt-0 mb-2">
+<div class="card card-body p-2 mb-3">
+  <div class="table-responsive">
+    <table class="table table-sm mb-0">
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th>CO Name</th>
+          {% if request.user.is_superuser %}<th>Amount</th>{% endif %}
+          <th>Submitted</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for co in pending_cos %}
+        <tr>
+          <td>{{ co.bid.project_name }}</td>
+          <td>{{ co.name }}</td>
+          {% if request.user.is_superuser %}
+          <td>${{ co.amount|floatformat:0|intcomma }}</td>
+          {% endif %}
+          <td>{% if co.date_submitted %}{{ co.date_submitted|date:"M j, Y" }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+          <td><a class="btn btn-sm btn-outline-warning py-0" href="{% url 'view_bid' co.bid.uuid %}">View</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-success">No pending change orders.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# ── Top Customers & Top States ────────────────────────────────────────────── #}
+<div class="row mb-4">
+
+  <div class="col-lg-6 mb-3 mb-lg-0">
+    <h6 class="text-uppercase text-muted mb-1">Top Customers</h6>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Bids</th>
+              {% if request.user.is_superuser %}<th>Total Value</th>{% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in top_customers %}
+            <tr>
+              <td><a href="{% url 'customer' c.customer__uuid %}">{{ c.customer__name }}</a></td>
+              <td>{{ c.bid_count }}</td>
+              {% if request.user.is_superuser %}
+              <td>{% if c.total_value %}${{ c.total_value|floatformat:0|intcomma }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+              {% endif %}
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-muted">No customer data.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <h6 class="text-uppercase text-muted mb-1">Top States</h6>
+    <hr class="mt-0 mb-2">
+    <div class="card card-body p-2">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>Bids</th>
+              {% if request.user.is_superuser %}<th>Total Value</th>{% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in top_states %}
+            <tr>
+              <td>{{ s.state }}</td>
+              <td>{{ s.bid_count }}</td>
+              {% if request.user.is_superuser %}
+              <td>{% if s.total_value %}${{ s.total_value|floatformat:0|intcomma }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+              {% endif %}
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-muted">No state data.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -45,12 +45,13 @@
         {% if perms.landscape.view_bid %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle nav-hover-label"
-             href="{% url 'bid_pipeline' %}"
+             href="{% url 'landscape_dashboard' %}"
              data-bs-toggle="dropdown"
              aria-expanded="false">Landscape</a>
           <ul class="dropdown-menu dropdown-menu-dark">
-            <li><a class="dropdown-item" href="{% url 'bid_pipeline' %}">Bid Pipeline</a></li>
+            <li><a class="dropdown-item" href="{% url 'landscape_dashboard' %}">Dashboard</a></li>
             <li><a class="dropdown-item" href="{% url 'active_projects' %}">Active Projects</a></li>
+            <li><a class="dropdown-item" href="{% url 'bid_pipeline' %}">Bid Pipeline</a></li>
             <li><a class="dropdown-item" href="{% url 'completed_projects' %}">Completed Projects</a></li>
           </ul>
         </li>
