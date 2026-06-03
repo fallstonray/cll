@@ -73,32 +73,32 @@
 <div class="card card-body p-3 mb-3">
   <div class="d-flex flex-wrap gap-4 justify-content-around align-items-center">
     <div class="text-center">
-      <div class="mb-1"><span class="badge bg-secondary px-3 py-2 fs-6">{{ phase_counts.estimating|default:"0" }}</span></div>
+      <div class="mb-1"><a href="{% url 'bid_pipeline' %}?phase=estimating" class="text-decoration-none"><span class="badge bg-secondary px-3 py-2 fs-6">{{ phase_counts.estimating|default:"0" }}</span></a></div>
       <small class="text-muted">Estimating</small>
     </div>
     <div class="text-center">
-      <div class="mb-1"><span class="badge bg-primary px-3 py-2 fs-6">{{ phase_counts.submitted|default:"0" }}</span></div>
+      <div class="mb-1"><a href="{% url 'bid_pipeline' %}?phase=submitted" class="text-decoration-none"><span class="badge bg-primary px-3 py-2 fs-6">{{ phase_counts.submitted|default:"0" }}</span></a></div>
       <small class="text-muted">Submitted</small>
     </div>
     <div class="text-center">
-      <div class="mb-1"><span class="badge bg-warning text-dark px-3 py-2 fs-6">{{ phase_counts.on_hold|default:"0" }}</span></div>
+      <div class="mb-1"><a href="{% url 'bid_pipeline' %}?phase=on_hold" class="text-decoration-none"><span class="badge bg-warning text-dark px-3 py-2 fs-6">{{ phase_counts.on_hold|default:"0" }}</span></a></div>
       <small class="text-muted">On Hold</small>
     </div>
     <div class="text-center">
-      <div class="mb-1"><span class="badge bg-info px-3 py-2 fs-6">{{ phase_counts.likely|default:"0" }}</span></div>
+      <div class="mb-1"><a href="{% url 'active_projects' %}?phase=likely" class="text-decoration-none"><span class="badge bg-info px-3 py-2 fs-6">{{ phase_counts.likely|default:"0" }}</span></a></div>
       <small class="text-muted">Likely</small>
     </div>
     <div class="text-center">
-      <div class="mb-1"><span class="badge bg-success px-3 py-2 fs-6">{{ phase_counts.awarded|default:"0" }}</span></div>
+      <div class="mb-1"><a href="{% url 'active_projects' %}?phase=awarded" class="text-decoration-none"><span class="badge bg-success px-3 py-2 fs-6">{{ phase_counts.awarded|default:"0" }}</span></a></div>
       <small class="text-muted">Awarded</small>
     </div>
     <div class="vr d-none d-sm-block"></div>
     <div class="text-center">
-      <div class="mb-1"><span class="badge bg-danger px-3 py-2 fs-6">{{ phase_counts.lost|default:"0" }}</span></div>
+      <div class="mb-1"><a href="{% url 'bid_pipeline' %}?phase=lost" class="text-decoration-none"><span class="badge bg-danger px-3 py-2 fs-6">{{ phase_counts.lost|default:"0" }}</span></a></div>
       <small class="text-muted">Lost</small>
     </div>
     <div class="text-center">
-      <div class="mb-1"><span class="badge bg-dark px-3 py-2 fs-6">{{ phase_counts.dead|default:"0" }}</span></div>
+      <div class="mb-1"><a href="{% url 'bid_pipeline' %}?phase=dead" class="text-decoration-none"><span class="badge bg-dark px-3 py-2 fs-6">{{ phase_counts.dead|default:"0" }}</span></a></div>
       <small class="text-muted">Dead</small>
     </div>
   </div>
@@ -119,15 +119,16 @@
           <thead>
             <tr>
               <th>Project</th>
+              <th>State</th>
               <th>Status</th>
               {% if request.user.is_superuser %}<th>Amount</th>{% endif %}
-              <th></th>
             </tr>
           </thead>
           <tbody>
             {% for p in active_projects %}
             <tr>
-              <td>{{ p.project_name }}</td>
+              <td><a href="{% url 'view_bid' p.uuid %}" class="text-decoration-none fw-semibold">{{ p.project_name }}</a></td>
+              <td>{{ p.state|default:"—" }}</td>
               <td>
                 {% if p.status == 'in_progress' %}<span class="badge bg-primary">In Progress</span>
                 {% elif p.status == 'scheduled' %}<span class="badge bg-info">Scheduled</span>
@@ -139,7 +140,6 @@
               {% if request.user.is_superuser %}
               <td>{% if p.amount %}${{ p.amount|floatformat:0|intcomma }}{% else %}—{% endif %}</td>
               {% endif %}
-              <td><a class="btn btn-sm btn-outline-success py-0" href="{% url 'view_bid' p.uuid %}">View</a></td>
             </tr>
             {% empty %}
             <tr><td colspan="4" class="text-muted">No active projects.</td></tr>

@@ -19,6 +19,12 @@
             </div>
         </div>
         <hr>
+        {% if phase_filter %}
+        <div class="alert alert-info d-flex justify-content-between align-items-center py-2 mb-3">
+            <span>Filtered by phase: <strong>{{ phase_filter|title }}</strong></span>
+            <a class="btn btn-sm btn-outline-secondary" href="{% url 'active_projects' %}">✕ Clear Filter</a>
+        </div>
+        {% endif %}
         <div class="card card-body">
             <div class="table-responsive">
                 <table class="table table-sm table-striped table-hover">

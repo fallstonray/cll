@@ -188,7 +188,10 @@ def activeProjects(request):
     sort  = request.GET.get('sort', 'start_date')
     order = request.GET.get('order', 'asc')
     field = ACTIVE_SORT_FIELDS.get(sort, 'start_date')
-    projects = Bid.objects.filter(phase__in=['awarded', 'likely']).exclude(status='completed').order_by(
+    phase_filter = request.GET.get('phase')
+    allowed_phases = ['awarded', 'likely']
+    phases = [phase_filter] if phase_filter in allowed_phases else allowed_phases
+    projects = Bid.objects.filter(phase__in=phases).exclude(status='completed').order_by(
         f'-{field}' if order == 'desc' else field
     )
     if request.GET.get('export') == 'csv':
@@ -222,6 +225,7 @@ def activeProjects(request):
         'total_amount': total_amount,
         'sort': sort,
         'order': order,
+        'phase_filter': phase_filter if phase_filter in allowed_phases else None,
     }
     return render(request, 'landscape/active_projects.html', context)
 
