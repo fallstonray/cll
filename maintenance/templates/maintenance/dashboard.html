@@ -10,7 +10,7 @@
   {# ── LANDSCAPE COLUMN ───────────────────────────────────────────── #}
   {% if show_landscape %}
   <div class="{% if show_maintenance %}col-lg-6 pe-lg-3 border-end{% else %}col-12{% endif %}">
-    <h5 class="mb-3"><a href="{% url 'landscape_dashboard' %}" class="text-decoration-none text-success">Landscape</a></h5>
+    <h5 class="mb-3"><a href="{% url 'landscape_dashboard' %}" class="text-decoration-none text-success">Landscape Dashboard</a></h5>
 
     <div class="row g-2 mb-3">
       <div class="col-6">
@@ -85,7 +85,7 @@
   {# ── MAINTENANCE COLUMN ─────────────────────────────────────────── #}
   {% if show_maintenance %}
   <div class="{% if show_landscape %}col-lg-6 ps-lg-3 mt-4 mt-lg-0{% else %}col-12{% endif %}">
-    <h5 class="mb-3"><a href="{% url 'maintenance_dashboard' %}" class="text-decoration-none text-primary">Maintenance</a></h5>
+    <h5 class="mb-3"><a href="{% url 'maintenance_dashboard' %}" class="text-decoration-none text-primary">Maintenance Dashboard</a></h5>
 
     <div class="row g-2 mb-3">
       <div class="col-6">
