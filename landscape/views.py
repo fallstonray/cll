@@ -85,7 +85,7 @@ def landscapeDashboard(request):
 
     completed_qs = Bid.objects.filter(status='completed')
     warranties_expiring = sum(
-        1 for b in completed_qs if b.end_date and 0 <= b.warranty_days_left <= 60
+        1 for b in completed_qs if b.end_date and b.warranty_days_left is not None and 0 <= b.warranty_days_left <= 60
     )
 
     active_project_value = active_projects_qs.aggregate(total=Sum('amount'))['total'] or 0
